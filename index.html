@@ -5,128 +5,122 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instapay</title>
     <style>
-        :root { --instapay-purple: #4e2a84; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #fcfcfc; margin: 0; display: flex; justify-content: center; }
-        .app-container { width: 100%; max-width: 400px; background: white; min-height: 100vh; position: relative; overflow: hidden; }
+        :root { --ip-purple: #4e2a84; --ip-light-purple: #f3f0f8; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #000; margin: 0; display: flex; justify-content: center; }
+        .app-screen { width: 100%; max-width: 400px; background: white; min-height: 100vh; position: relative; border-radius: 30px; overflow: hidden; }
         
-        /* Header */
-        .header { background: var(--instapay-purple); color: white; padding: 20px; text-align: center; font-weight: bold; font-size: 18px; }
-        
-        /* Form Styling */
+        /* Header & Form */
+        .header { background: var(--ip-purple); color: white; padding: 20px; text-align: center; font-weight: bold; }
         .content { padding: 20px; }
-        .input-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-size: 14px; color: #555; font-weight: bold; }
-        input { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 12px; box-sizing: border-box; font-size: 16px; background: #f9f9f9; }
-        
-        .main-btn { background: var(--instapay-purple); color: white; width: 100%; padding: 15px; border: none; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 12px; box-sizing: border-box; font-size: 16px; }
+        .send-btn { background: var(--ip-purple); color: white; width: 100%; padding: 15px; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; margin-top: 20px; }
 
-        /* Success Screen (Hidden by default) */
-        #success-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: white; z-index: 100; display: none; flex-direction: column; align-items: center; padding-top: 50px;
-        }
-        .check-icon { width: 120px; height: 120px; background: #e8f5e9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
-        .check-icon::after { content: '✔'; font-size: 60px; color: #4caf50; }
-        .success-title { color: #333; font-size: 20px; font-weight: bold; margin-bottom: 5px; }
-        .success-subtitle { color: #4caf50; font-size: 16px; margin-bottom: 30px; }
-        .amount-display { font-size: 48px; font-weight: bold; color: #333; display: flex; align-items: baseline; }
-        .currency { font-size: 18px; color: #e67e22; margin-right: 8px; }
-        
-        .details-card { width: 90%; background: #f8f9fa; border-radius: 15px; padding: 20px; margin-top: 30px; border: 1px solid #eee; }
-        .detail-row { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .label { color: #888; font-size: 14px; }
-        .val { color: #333; font-weight: bold; font-size: 14px; }
-        
-        .home-btn { position: absolute; bottom: 30px; width: 90%; background: var(--instapay-purple); color: white; padding: 15px; border-radius: 25px; text-align: center; text-decoration: none; font-weight: bold; }
+        /* Success Screen (The Real Fake) */
+        #success-page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #fdfdfd; display: none; flex-direction: column; align-items: center; z-index: 100; }
+        .top-bar { width: 100%; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
+        .check-container { margin-top: 20px; text-align: center; }
+        .check-img { width: 180px; } /* صورة الصح والدوائر */
+        .success-text { color: #333; font-weight: bold; font-size: 18px; margin-top: 10px; }
+        .amount-val { font-size: 55px; font-weight: bold; color: #1a1a1a; margin-top: 20px; }
+        .egp { font-size: 20px; color: #d35400; margin-right: 5px; }
+        .total-label { color: #bdc3c7; font-size: 14px; margin-top: 5px; }
+
+        /* Details Card (Like Image) */
+        .receipt-card { width: 92%; background: white; border: 1px solid #f0f0f0; border-radius: 15px; margin-top: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .card-row { padding: 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f9f9f9; }
+        .info-box { display: flex; flex-direction: column; align-items: flex-end; }
+        .info-label { color: #95a5a6; font-size: 12px; margin-bottom: 4px; }
+        .info-val { color: #2c3e50; font-weight: bold; font-size: 14px; direction: ltr; }
+        .ip-logo { width: 35px; }
+
+        /* Footer Button */
+        .footer-btn { position: absolute; bottom: 20px; width: 90%; background: var(--ip-purple); color: white; padding: 16px; border-radius: 12px; text-align: center; text-decoration: none; font-weight: bold; font-size: 16px; }
     </style>
 </head>
 <body>
 
-<div class="app-container" id="main-app">
-    <div class="header">إرسال نقود</div>
+<div class="app-screen" id="main-view">
+    <div class="header">تحويل مالي</div>
     <div class="content">
-        <div class="input-group">
-            <label>رقم الموبايل / عنوان الدفع (IPA)</label>
-            <input type="text" id="receiverPhone" placeholder="أدخل رقم الهاتف المستلم">
-        </div>
-        
-        <div class="input-group">
-            <label>المبلغ</label>
-            <input type="number" id="amount" placeholder="0.00">
-        </div>
-
-        <button class="main-btn" onclick="sendMoney()">تحويل الآن</button>
+        <label>إلى رقم الهاتف</label>
+        <input type="text" id="targetPhone" placeholder="01xxxxxxxxx">
+        <label>المبلغ</label>
+        <input type="number" id="targetAmount" placeholder="11000">
+        <button class="send-btn" onclick="executeTransfer()">تحويل</button>
     </div>
 </div>
 
-<div id="success-screen">
-    <div style="width: 100%; padding: 10px; text-align: left;"> <button onclick="location.reload()" style="border:none; background:none; font-size:20px;">✕</button> </div>
-    <div class="check-icon"></div>
-    <div class="success-title">معاملة ناجحة</div>
-    <div class="success-subtitle">تم التحويل بنجاح</div>
-    
-    <div class="amount-display">
-        <span id="display-amount">0</span> <span class="currency">EGP</span>
+<div id="success-page">
+    <div class="top-bar">
+        <span style="color:#666; font-size: 14px; font-weight: bold;">معاملة ناجحة</span>
+        <button onclick="location.reload()" style="background:#eee; border:none; border-radius:50%; width:30px; height:30px;">›</button>
     </div>
 
-    <div class="details-card">
-        <div class="detail-row">
-            <span class="label">من</span>
-            <span class="val">Khadijja Muhammad (instapay)</span>
+    <div class="check-container">
+        <img src="https://i.ibb.co/Lkv7M9v/success-check.png" class="check-img" alt="Success">
+        <div class="success-text">تم التحويل بنجاح</div>
+    </div>
+
+    <div class="amount-val"><span id="res-amount">0</span><span class="egp">EGP</span></div>
+    <div class="total-label">المبلغ الإجمالي</div>
+
+    <div class="receipt-card">
+        <div class="card-row">
+            <img src="https://instapay.eg/assets/images/logo.png" class="ip-logo">
+            <div class="info-box">
+                <span class="info-label">من</span>
+                <span class="info-val">Khadijja M***** instapay</span>
+                <span class="info-label" style="font-size:10px;">ACCOUNT XX0170</span>
+            </div>
         </div>
-        <div class="detail-row">
-            <span class="label">إلى</span>
-            <span class="val" id="display-receiver">المرسل إليه</span>
+        
+        <div style="text-align: center; margin: -10px 0; position: relative; z-index: 2;">
+            <span style="background: white; border: 1px solid #eee; border-radius: 50%; padding: 2px 5px; color: #2ecc71; font-size: 10px;">✔</span>
         </div>
-        <div class="detail-row" style="border:none;">
-            <span class="label">رقم العملية</span>
-            <span class="val" id="op-number">098237462</span>
+
+        <div class="card-row" style="border:none;">
+            <img src="https://cdn-icons-png.flaticon.com/512/0/191.png" style="width: 25px; opacity: 0.5;">
+            <div class="info-box">
+                <span class="info-label">إلى</span>
+                <span class="info-val" id="res-name">User H**** M****</span>
+                <span class="info-label" style="font-size:10px;" id="res-phone">01007******</span>
+            </div>
         </div>
     </div>
 
-    <a href="#" class="home-btn" onclick="location.reload()">الرئيسية</a>
+    <a href="#" class="footer-btn" onclick="location.reload()">الرئيسية</a>
 </div>
 
 <script>
-async function sendMoney() {
-    const phone = document.getElementById('receiverPhone').value;
-    const amount = document.getElementById('amount').value;
-    
-    if(!phone || !amount) { alert("من فضلك املأ البيانات"); return; }
+async function executeTransfer() {
+    const amount = document.getElementById('targetAmount').value;
+    const phone = document.getElementById('targetPhone').value;
 
-    // بيانات Infobip للربط الحقيقي
+    if(!amount || !phone) return alert("اكتب البيانات");
+
+    // بياناتك للـ SMS
     const apiKey = "2b6362b169aa1a07ac10a516ab426021-b0ddf181-c4fd-4adf-97ab-6f2b51d2ba11";
     const baseUrl = "4kejl6.api.infobip.com";
-    let formattedPhone = phone.startsWith('0') ? '2' + phone : phone;
 
-    // 1. إظهار شاشة النجاح فوراً (الخدعة البصرية)
-    document.getElementById('display-amount').innerText = Number(amount).toLocaleString();
-    document.getElementById('display-receiver').innerText = phone;
-    document.getElementById('op-number').innerText = Math.floor(Math.random() * 900000000) + 100000000;
-    document.getElementById('main-app').style.display = 'none';
-    document.getElementById('success-screen').style.display = 'flex';
+    // إظهار شاشة النجاح فوراً
+    document.getElementById('res-amount').innerText = amount;
+    // تزييف اسم المستلم بوضع نجوم
+    document.getElementById('res-phone').innerText = phone.substring(0,4) + "*******";
+    document.getElementById('main-view').style.display = 'none';
+    document.getElementById('success-page').style.display = 'flex';
 
-    // 2. إرسال الـ SMS الحقيقية في الخلفية
-    const messageText = `Instapay: تم استقبال مبلغ ${amount} ج.م من Khadijja Muhammad. رقم العملية: ${document.getElementById('op-number').innerText}`;
-
+    // إرسال الرسالة الحقيقية
+    const msg = `Instapay: تم استقبال مبلغ ${amount} ج.م من Khadijja M. رقم العملية: ${Math.floor(Math.random()*9000000)}`;
+    
     try {
         await fetch(`https://${baseUrl}/sms/2/text/advanced`, {
             method: 'POST',
-            headers: {
-                "Authorization": `App ${apiKey}`,
-                "Content-Type": "application/json"
-            },
+            headers: { "Authorization": `App ${apiKey}`, "Content-Type": "application/json" },
             body: JSON.stringify({
-                "messages": [{
-                    "destinations": [{"to": formattedPhone}],
-                    "from": "ServiceSMS",
-                    "text": messageText
-                }]
+                "messages": [{"destinations": [{"to": "2" + phone}], "from": "ServiceSMS", "text": msg}]
             })
         });
-    } catch (e) {
-        console.log("SMS failed in background");
-    }
+    } catch(e) {}
 }
 </script>
 
