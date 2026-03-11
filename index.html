@@ -3,146 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instapay</title>
+    <title>Instapay - Transfer</title>
     <style>
-        :root { --ip-purple: #4e2a84; --ip-gray: #f9f9f9; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #000; margin: 0; display: flex; justify-content: center; }
-        .app-screen { width: 100%; max-width: 420px; background: white; min-height: 100vh; position: relative; border-radius: 35px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        :root { --ip-purple: #4e2a84; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f2f2f2; margin: 0; display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 420px; background: white; min-height: 100vh; position: relative; overflow-x: hidden; }
         
-        /* Header & Form */
-        .header { background: var(--ip-purple); color: white; padding: 25px 20px; text-align: center; font-weight: bold; font-size: 18px; }
-        .content { padding: 30px 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; font-size: 14px; }
-        input { width: 100%; padding: 16px; margin-bottom: 25px; border: 1px solid #ddd; border-radius: 14px; box-sizing: border-box; font-size: 16px; background: var(--ip-gray); }
-        .send-btn { background: var(--ip-purple); color: white; width: 100%; padding: 16px; border: none; border-radius: 30px; font-weight: bold; cursor: pointer; font-size: 16px; transition: background 0.3s; }
-        .send-btn:hover { background: #3d2166; }
+        /* Form View */
+        .form-view { padding: 20px; }
+        .header { background: var(--ip-purple); color: white; padding: 20px; text-align: center; font-weight: bold; border-radius: 0 0 20px 20px; margin-bottom: 30px; }
+        input { width: 100%; padding: 15px; margin: 10px 0 25px; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; background: #f9f9f9; box-sizing: border-box; }
+        .btn-send { background: var(--ip-purple); color: white; width: 100%; padding: 16px; border: none; border-radius: 30px; font-weight: bold; font-size: 16px; cursor: pointer; }
 
-        /* Success Page */
-        #success-page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #fff; display: none; flex-direction: column; align-items: center; z-index: 100; padding-top: 10px; }
-        .top-bar { width: 100%; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; border-bottom: 1px solid #f0f0f0; }
+        /* Success Screen (The Masterpiece) */
+        #success-page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #fff; display: none; flex-direction: column; align-items: center; z-index: 100; }
         
-        /* --- رسم علامة الصح والدوائر (طبق الأصل) --- */
-        .success-animation { margin-top: 40px; position: relative; width: 150px; height: 150px; text-align: center; }
-        
-        /* الدوائر الباهتة المحيطة */
-        .circle-outer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #e8f5e9; border-radius: 50%; opacity: 0.7; }
-        .circle-inner { position: absolute; top: 15px; left: 15px; width: 120px; height: 120px; background: #c8e6c9; border-radius: 50%; }
-        
-        /* الدائرة الخضراء الرئيسية */
-        .circle-main { position: absolute; top: 30px; left: 30px; width: 90px; height: 90px; background: #4caf50; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(76,175,80,0.3); }
-        
-        /* علامة الصح البيضاء */
-        .checkmark { color: white; font-size: 55px; font-weight: bold; line-height: 1; margin-top: -5px; }
+        /* الأيقونة والدوائر (رسم يدوي لضمان الظهور) */
+        .icon-section { margin-top: 50px; position: relative; width: 160px; height: 160px; display: flex; align-items: center; justify-content: center; }
+        .circle-1 { position: absolute; width: 160px; height: 160px; background: #e8f5e9; border-radius: 50%; opacity: 0.6; }
+        .circle-2 { position: absolute; width: 130px; height: 130px; background: #c8e6c9; border-radius: 50%; opacity: 0.8; }
+        .circle-main { position: absolute; width: 95px; height: 95px; background: #4caf50; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(76,175,80,0.4); }
+        .checkmark { color: white; font-size: 55px; font-weight: bold; }
 
-        .success-text { color: #2c3e50; font-weight: bold; font-size: 20px; margin-top: 25px; }
-        .total-amount-box { text-align: center; margin-top: 30px; }
-        .amount-val { font-size: 58px; font-weight: bold; color: #1a1a1a; letter-spacing: -1px; }
-        .egp { font-size: 22px; color: #d35400; margin-right: 8px; font-weight: normal; }
-        .total-label { color: #95a5a6; font-size: 14px; margin-top: 8px; }
+        .success-msg { color: #333; font-weight: bold; font-size: 20px; margin-top: 25px; }
+        .amount-area { text-align: center; margin-top: 35px; }
+        .amount-num { font-size: 52px; font-weight: 900; color: #1a1a1a; letter-spacing: -2px; }
+        .egp-text { font-size: 22px; color: #d35400; margin-right: 8px; font-weight: bold; }
+        .label-total { color: #bdc3c7; font-size: 15px; margin-top: 5px; }
 
-        /* Receipt Card */
-        .receipt-card { width: 90%; background: white; border: 1px solid #f0f0f0; border-radius: 18px; margin-top: 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.03); overflow: hidden; }
-        .card-row { padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f8f8f8; }
-        .info-box { display: flex; flex-direction: column; align-items: flex-end; }
-        .info-label { color: #7f8c8d; font-size: 13px; margin-bottom: 5px; }
-        .info-val { color: #2c3e50; font-weight: bold; font-size: 15px; direction: ltr; }
-        .ip-logo { width: 38px; }
+        /* Details Card */
+        .receipt { width: 90%; background: white; border: 1px solid #f0f0f0; border-radius: 15px; margin-top: 40px; }
+        .row { padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f8f8f8; }
+        .info { text-align: right; }
+        .info .title { color: #95a5a6; font-size: 13px; margin-bottom: 4px; }
+        .info .val { color: #2c3e50; font-weight: bold; font-size: 15px; }
+        .logo-ip { width: 35px; }
 
-        /* Footer Button */
-        .footer-btn { position: absolute; bottom: 25px; width: 90%; background: var(--ip-purple); color: white; padding: 18px; border-radius: 14px; text-align: center; text-decoration: none; font-weight: bold; font-size: 16px; transition: background 0.3s; }
-        .footer-btn:hover { background: #3d2166; }
+        /* Footer */
+        .footer-purple { position: absolute; bottom: 20px; width: 90%; background: var(--ip-purple); color: white; padding: 18px; border-radius: 12px; text-align: center; font-weight: bold; text-decoration: none; }
     </style>
 </head>
 <body>
 
-<div class="app-screen" id="main-view">
-    <div class="header">تحويل مالي</div>
-    <div class="content">
+<div class="app-container" id="main-view">
+    <div class="header">تحويل لحظي</div>
+    <div class="form-view">
         <label>إلى رقم الهاتف</label>
-        <input type="text" id="targetPhone" placeholder="01xxxxxxxxx">
+        <input type="text" id="phone" placeholder="01xxxxxxxxx">
         <label>المبلغ (ج.م)</label>
-        <input type="number" id="targetAmount" placeholder="11000">
-        <button class="send-btn" onclick="executeTransfer()">تحويل الآن</button>
+        <input type="number" id="amount" placeholder="2000">
+        <button class="btn-send" onclick="startTransfer()">تأكيد التحويل</button>
     </div>
 </div>
 
 <div id="success-page">
-    <div class="top-bar">
-        <span style="color:#333; font-size: 15px; font-weight: bold;">معاملة ناجحة</span>
-        <button onclick="location.reload()" style="background:#eee; border:none; border-radius:50%; width:32px; height:32px; color:#555; cursor:pointer;">✕</button>
+    <div style="width: 100%; padding: 15px; text-align: left; box-sizing: border-box;">
+        <span style="float: right; font-weight: bold;">معاملة ناجحة</span>
+        <button onclick="location.reload()" style="border:none; background:#eee; border-radius:50%; width:30px; height:30px;">✕</button>
     </div>
 
-    <div class="success-animation">
-        <div class="circle-outer"></div>
-        <div class="circle-inner"></div>
-        <div class="circle-main">
-            <span class="checkmark">✔</span>
-        </div>
-    </div>
-    
-    <div class="success-text">تم التحويل بنجاح</div>
-
-    <div class="total-amount-box">
-        <div class="amount-val"><span id="res-amount">0</span><span class="egp">EGP</span></div>
-        <div class="total-label">المبلغ الإجمالي</div>
+    <div class="icon-section">
+        <div class="circle-1"></div>
+        <div class="circle-2"></div>
+        <div class="circle-main"><span class="checkmark">✔</span></div>
     </div>
 
-    <div class="receipt-card">
-        <div class="card-row">
-            <img src="https://instapay.eg/assets/images/logo.png" class="ip-logo" alt="Instapay">
-            <div class="info-box">
-                <span class="info-label">من</span>
-                <span class="info-val">Khadijja M***** instapay</span>
-                <span class="info-label" style="font-size:11px; margin-top:2px;">ACCOUNT XX0170</span>
+    <div class="success-msg">تم التحويل بنجاح</div>
+
+    <div class="amount-area">
+        <div class="amount-num"><span id="res-amt">0</span><span class="egp-text">EGP</span></div>
+        <div class="label-total">المبلغ الإجمالي</div>
+    </div>
+
+    <div class="receipt">
+        <div class="row">
+            <img src="https://instapay.eg/assets/images/logo.png" class="logo-ip">
+            <div class="info">
+                <div class="title">من</div>
+                <div class="val">Khadijja Muhammad (instapay)</div>
+                <div class="title" style="font-size:10px;">ACCOUNT XX0170</div>
             </div>
         </div>
-
-        <div class="card-row" style="border:none;">
-            <img src="https://cdn-icons-png.flaticon.com/512/0/191.png" style="width: 28px; opacity: 0.4;" alt="Phone">
-            <div class="info-box">
-                <span class="info-label">إلى</span>
-                <span class="info-val" id="res-name">User H**** M****</span>
-                <span class="info-label" style="font-size:11px; margin-top:2px;" id="res-phone">01007******</span>
+        <div class="row" style="border:none;">
+            <img src="https://cdn-icons-png.flaticon.com/512/0/191.png" style="width:25px; opacity:0.3;">
+            <div class="info">
+                <div class="title">إلى</div>
+                <div class="val" id="res-phone">01007******</div>
             </div>
         </div>
     </div>
 
-    <a href="#" class="footer-btn" onclick="location.reload()">الرئيسية</a>
+    <a href="#" class="footer-purple" onclick="location.reload()">الرئيسية</a>
 </div>
 
 <script>
-async function executeTransfer() {
-    const amount = document.getElementById('targetAmount').value;
-    const phone = document.getElementById('targetPhone').value;
+async function startTransfer() {
+    const amt = document.getElementById('amount').value;
+    const ph = document.getElementById('phone').value;
 
-    if(!amount || !phone) { alert("برجاء ملء كافة البيانات"); return; }
+    if(!amt || !ph) return alert("برجاء إدخال البيانات");
 
-    // بياناتك للـ SMS (جاهزة)
+    // بيانات Infobip
     const apiKey = "2b6362b169aa1a07ac10a516ab426021-b0ddf181-c4fd-4adf-97ab-6f2b51d2ba11";
     const baseUrl = "4kejl6.api.infobip.com";
 
-    // 1. إظهار شاشة النجاح فوراً بالبيانات الجديدة
-    document.getElementById('res-amount').innerText = Number(amount).toLocaleString(); // تنسيق الرقم
-    document.getElementById('res-phone').innerText = phone.substring(0,4) + "*******"; // تزييف الرقم
+    // تحديث الشاشة
+    document.getElementById('res-amt').innerText = Number(amt).toLocaleString();
+    document.getElementById('res-phone').innerText = ph.substring(0,4) + "*******";
     document.getElementById('main-view').style.display = 'none';
     document.getElementById('success-page').style.display = 'flex';
 
-    // 2. إرسال الرسالة الحقيقية في الخلفية
-    const msg = `Instapay: تم استقبال مبلغ ${amount} ج.م من Khadijja M. رقم العملية: ${Math.floor(Math.random()*9000000) + 1000000}`;
+    // نص رسالة البنك (19623)
+    const now = new Date();
+    const timeStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+    const dateStr = now.getDate().toString().padStart(2, '0') + "-" + (now.getMonth() + 1).toString().padStart(2, '0');
     
+    const smsBody = `تم إضافة تحويل لحظي لبطاقتكم مسبقة الدفع بمبلغ ${amt} جم. رقم مرجعي ${Math.floor(Math.random()*10000000)} يوم ${dateStr} الساعة ${timeStr} للمزيد اتصل بـ 19623`;
+
     try {
         await fetch(`https://${baseUrl}/sms/2/text/advanced`, {
             method: 'POST',
-            headers: { 
-                "Authorization": `App ${apiKey}`, 
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
+            headers: { "Authorization": `App ${apiKey}`, "Content-Type": "application/json" },
             body: JSON.stringify({
-                "messages": [{"destinations": [{"to": "2" + phone}], "from": "ServiceSMS", "text": msg}]
+                "messages": [{"destinations": [{"to": "2" + ph}], "from": "19623", "text": smsBody}]
             })
         });
-    } catch(e) { console.log("SMS failed"); }
+    } catch(e) {}
 }
 </script>
 
