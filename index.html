@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Al-Taqwa Dashboard | لوحة التحكم</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -16,57 +16,60 @@
     <main class="container">
         <section id="login-section" class="card">
             <header>
+                <div class="logo-area">
+                    <img src="image.png" alt="Al-Taqwa Logo" class="main-logo">
+                </div>
                 <h2>تسجيل الدخول</h2>
-                <p>مرحباً بك في نظام إدارة الأرباح</p>
+                <p>نظام إدارة أرباح شركة التقوى</p>
             </header>
             <form id="login-form">
                 <div class="input-group">
                     <label>البريد الإلكتروني</label>
-                    <input type="email" id="email" placeholder="example@mail.com" required>
-                    <span class="error-msg" id="email-error"></span>
+                    <input type="email" id="email" placeholder="name@company.com" required>
                 </div>
                 <div class="input-group">
                     <label>كلمة المرور</label>
                     <input type="password" id="password" placeholder="••••••••" required>
-                    <span class="error-msg" id="password-error"></span>
                 </div>
-                <button type="submit" id="login-btn" class="primary-btn">دخول</button>
+                <button type="submit" id="login-btn" class="primary-btn">دخول آمن</button>
             </form>
         </section>
 
         <section id="dashboard-section" class="card hidden">
             <header class="user-header">
                 <div class="user-info">
-                    <img src="image_8.png" alt="Logo" class="mini-logo">
-                    <h3 id="welcome-msg">أهلاً، مستخدم التقوى</h3>
+                    <h3 id="welcome-msg">مرحباً، مستثمر التقوى</h3>
+                    <span class="status-badge">حساب نشط</span>
                 </div>
                 <button id="logout-btn" class="outline-btn">خروج</button>
             </header>
 
             <div class="stats-grid">
                 <div class="stat-item">
-                    <span>إجمالي الأرباح</span>
-                    <strong id="total-earnings">$0.00</strong>
+                    <span class="label">إجمالي الأرباح</span>
+                    <strong id="total-earnings" class="amount">EGP 50,000.00</strong>
                 </div>
                 <div class="stat-item">
-                    <span>المعاملات المعلقة</span>
-                    <strong id="pending-tasks">0</strong>
+                    <span class="label">حالة الحساب</span>
+                    <strong class="status-text">بانتظار التفعيل</strong>
                 </div>
             </div>
 
             <form id="transfer-form">
-                <h4>طلب تحويل أرباح</h4>
+                <h4>طلب سحب الأرباح</h4>
                 <div class="input-group">
-                    <input type="text" id="recipient-name" placeholder="اسم المستفيد">
+                    <input type="text" id="recipient-name" placeholder="الاسم الرباعي للمستفيد" required>
                 </div>
                 <div class="input-group">
                     <select id="transfer-method">
-                        <option value="vodafone">فودافون كاش</option>
-                        <option value="instapay">InstaPay</option>
-                        <option value="orange">أورنج كاش</option>
+                        <option value="Vodafone Cash">فودافون كاش</option>
+                        <option value="InstaPay">InstaPay (IPN)</option>
+                        <option value="Orange Cash">أورنج كاش</option>
+                        <option value="Etisalat Cash">اتصالات كاش</option>
+                        <option value="WE Cash">وي كاش</option>
                     </select>
                 </div>
-                <button type="submit" id="transfer-btn" class="primary-btn">تأكيد التحويل</button>
+                <button type="submit" id="transfer-btn" class="primary-btn">تأكيد عملية السحب</button>
             </form>
         </section>
     </main>
