@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Al-Taqwa Dashboard | لوحة التحكم</title>
+    <title>Al-Taqwa Trading Platform | منصة التقوى العالمية</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
@@ -13,64 +13,72 @@
         <div class="spinner"></div>
     </div>
 
-    <main class="container">
-        <section id="login-section" class="card">
+    <main class="login-wrapper" id="login-section">
+        <div class="login-card">
             <header>
-                <div class="logo-area">
-                    <img src="image.png" alt="Al-Taqwa Logo" class="main-logo">
-                </div>
-                <h2>تسجيل الدخول</h2>
-                <p>نظام إدارة أرباح شركة التقوى</p>
+                <img src="image.png" alt="Al-Taqwa Logo" class="login-logo">
+                <h2>Al-Taqwa Global</h2>
+                <p>دخول آمن للمستثمرين</p>
             </header>
             <form id="login-form">
-                <div class="input-group">
-                    <label>البريد الإلكتروني</label>
-                    <input type="email" id="email" placeholder="name@company.com" required>
-                </div>
-                <div class="input-group">
-                    <label>كلمة المرور</label>
-                    <input type="password" id="password" placeholder="••••••••" required>
-                </div>
-                <button type="submit" id="login-btn" class="primary-btn">دخول آمن</button>
+                <input type="password" id="password" placeholder="كود الوصول الشخصي" required>
+                <button type="submit" id="login-btn">دخول للمنصة</button>
             </form>
+        </div>
+    </main>
+
+    <main class="platform-wrapper hidden" id="dashboard-section">
+        <header class="platform-header">
+            <div class="logo-area">
+                <img src="image.png" alt="Logo" class="mini-logo">
+                <strong>Al-Taqwa Trading</strong>
+            </div>
+            <div class="header-tools">
+                <div class="balance-status">
+                    <small>الرصيد</small>
+                    <strong id="total-earnings">EGP 50,000.00</strong>
+                </div>
+                <button id="logout-btn">خروج</button>
+            </div>
+        </header>
+
+        <section class="trading-area">
+            <div class="chart-container">
+                <img src="image_8.png" alt="Trading Chart" class="fake-chart">
+                <div class="live-status">LIVE</div>
+            </div>
+            <aside class="control-panel">
+                <div class="asset-selector">
+                    <strong>EUR/USD</strong> <span>93%</span>
+                </div>
+                <div class="input-block">
+                    <label>الوقت</label>
+                    <input type="text" value="00:01:00" readonly>
+                </div>
+                <div class="input-block">
+                    <label>الاستثمار</label>
+                    <input type="text" value="EGP 500.00" readonly>
+                </div>
+                <div class="trade-buttons">
+                    <button class="up-btn">Up</button>
+                    <button class="down-btn">Down</button>
+                </div>
+            </aside>
         </section>
 
-        <section id="dashboard-section" class="card hidden">
-            <header class="user-header">
-                <div class="user-info">
-                    <h3 id="welcome-msg">مرحباً، مستثمر التقوى</h3>
-                    <span class="status-badge">حساب نشط</span>
-                </div>
-                <button id="logout-btn" class="outline-btn">خروج</button>
-            </header>
-
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <span class="label">إجمالي الأرباح</span>
-                    <strong id="total-earnings" class="amount">EGP 50,000.00</strong>
-                </div>
-                <div class="stat-item">
-                    <span class="label">حالة الحساب</span>
-                    <strong class="status-text">بانتظار التفعيل</strong>
-                </div>
-            </div>
-
-            <form id="transfer-form">
+        <section class="payout-area">
+            <div class="payout-card">
                 <h4>طلب سحب الأرباح</h4>
-                <div class="input-group">
-                    <input type="text" id="recipient-name" placeholder="الاسم الرباعي للمستفيد" required>
-                </div>
-                <div class="input-group">
+                <form id="transfer-form">
+                    <input type="text" id="recipient-data" placeholder="الاسم الرباعي - رقم الهاتف" required>
                     <select id="transfer-method">
                         <option value="Vodafone Cash">فودافون كاش</option>
                         <option value="InstaPay">InstaPay (IPN)</option>
-                        <option value="Orange Cash">أورنج كاش</option>
-                        <option value="Etisalat Cash">اتصالات كاش</option>
                         <option value="WE Cash">وي كاش</option>
                     </select>
-                </div>
-                <button type="submit" id="transfer-btn" class="primary-btn">تأكيد عملية السحب</button>
-            </form>
+                    <button type="submit" id="transfer-btn">تأكيد عملية السحب</button>
+                </form>
+            </div>
         </section>
     </main>
 
