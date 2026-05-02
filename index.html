@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --blue: #0046af; --dark-blue: #002d72; --light-bg: #f4f7fe; --green: #28a745; --red: #d9534f; }
-        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--light-bg); color: #333; transition: 0.3s; }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--light-bg); color: #333; }
         .protected { user-select: none; -webkit-user-select: none; }
         
         nav { background: var(--blue); color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
@@ -34,13 +34,16 @@
         #payment-section { position: relative; width: 100%; max-width: 420px; margin: 0 auto; overflow: hidden; background: #fff; }
         .base-img { width: 100%; display: block; }
         .drag-item { position: absolute; font-weight: 900; font-family: Arial; white-space: nowrap; cursor: move; touch-action: none; z-index: 10; }
-        #val-amt { top: 64.5%; left: 16%; color: #0b5155; font-size: 17px; } /* اللون الزيتي المطلوب */
+        
+        /* المبلغ باللون الزيتي وكلمة جنيه بالأسود */
+        #val-amt { top: 64.5%; left: 16%; color: #0b5155; font-size: 17px; }
+        #val-amt .currency { color: #000; margin-right: 4px; } /* كلمة جنيه بالأسود */
+        
         #val-dt { top: 71.2%; left: 16%; color: #000; font-size: 13px; }
         #val-num { top: 75.2%; left: 16%; color: #000; font-size: 14px; }
 
         .size-controls { background: rgba(0,0,0,0.8); color: white; padding: 15px; border-radius: 15px; margin-top: 10px; font-size: 11px; }
         .size-controls div { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
-        /* ------------------------------------------- */
 
         #admin-panel { display:none; position:fixed; inset:0; background:white; z-index:9999; padding:30px; overflow-y: auto; }
         .admin-trigger { position: fixed; bottom: 0; right: 0; width: 40px; height: 40px; z-index: 10000; opacity: 0; }
@@ -59,7 +62,6 @@
 </nav>
 
 <div class="container">
-    <!-- الصفحة الرئيسية -->
     <div id="home" class="page active">
         <div class="card">
             <h2 style="margin:0; color:var(--blue); text-align: center;">طلب سحب الأرباح</h2>
@@ -75,7 +77,6 @@
         </div>
     </div>
 
-    <!-- صفحة المتابعة والكود -->
     <div id="payments" class="page">
         <div class="card">
             <h2 style="color:var(--blue);">متابعة الطلب</h2>
@@ -88,11 +89,12 @@
         </div>
     </div>
 
-    <!-- صفحة الإيصال النهائي (الصورة) -->
     <div id="final" class="page">
         <div id="payment-section">
             <img src="image_5.png.jpg" class="base-img">
-            <div id="val-amt" class="drag-item">--</div>
+            <div id="val-amt" class="drag-item">
+                <span id="amt-num">--</span> <span class="currency">جنيه</span>
+            </div>
             <div id="val-dt" class="drag-item">--</div>
             <div id="val-num" class="drag-item">--</div>
         </div>
@@ -123,7 +125,7 @@
 </div>
 
 <script>
-    let config = JSON.parse(localStorage.getItem('siteConfigV4')) || { profit: 50000, fees: 500, wallet: '01226811784', code: '9900' };
+    let config = JSON.parse(localStorage.getItem('siteConfigV5')) || { profit: 50000, fees: 500, wallet: '01226811784', code: '9900' };
 
     function applyConfig() {
         document.getElementById('f-fees').innerText = config.fees;
@@ -154,7 +156,7 @@
     function verifyCode() {
         if(document.getElementById('activeCode').value === config.code) {
             showPage('final');
-            document.getElementById('val-amt').innerText = config.profit + " جنيه";
+            document.getElementById('amt-num').innerText = config.profit;
             let now = new Date();
             document.getElementById('val-dt').innerText = now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'}) + " - " + now.toLocaleDateString('en-GB');
             document.getElementById('val-num').innerText = "35" + Math.floor(Math.random() * 900000000);
@@ -162,7 +164,6 @@
     }
 
     function changeSize(id, size) { document.getElementById(id).style.fontSize = size + "px"; }
-
     function handleAdminLogin() { if (prompt("الرمز:") === "1") document.getElementById('admin-panel').style.display = 'block'; }
 
     function saveAdmin() {
@@ -172,18 +173,18 @@
             wallet: document.getElementById('s-wallet').value,
             code: document.getElementById('s-code').value
         };
-        localStorage.setItem('siteConfigV4', JSON.stringify(config));
+        localStorage.setItem('siteConfigV5', JSON.stringify(config));
         location.reload();
     }
 
-    // نظام التحريك (Drag)
+    // نظام التحريك
     const items = document.querySelectorAll('.drag-item');
     items.forEach(el => {
         let active = false, currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
         const dragStart = (e) => {
             initialX = (e.type === "touchstart" ? e.touches[0].clientX : e.clientX) - xOffset;
             initialY = (e.type === "touchstart" ? e.touches[0].clientY : e.clientY) - yOffset;
-            if (e.target === el) active = true;
+            if (e.target.closest('.drag-item') === el) active = true;
         };
         const dragMove = (e) => {
             if (active) {
