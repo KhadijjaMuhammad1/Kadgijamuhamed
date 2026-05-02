@@ -3,195 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة الصرف الرسمية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <title>تأكيد العملية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --blue: #0046af; --red: #e60000; --text-grey: #757575; }
-        body { margin: 0; font-family: 'Cairo', sans-serif; background: #f4f4f4; }
+        :root { --voda-red: #e60000; --bg-gray: #f2f2f2; --text-gray: #7d7d7d; }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--bg-gray); overflow-x: hidden; }
         .protected { user-select: none; -webkit-user-select: none; }
         
-        /* تصميم الإيصال (image_3.png) */
-        .receipt-container { background: #fff; width: 100%; max-width: 400px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
-        .receipt-header { background: #000; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 18px; }
-        .success-section { text-align: center; padding: 25px; }
-        .check-icon { width: 70px; height: 70px; background: #24b34b; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 35px; border: 6px solid #e8f5e9; }
+        /* تصميم صورة image_5 بدقة */
+        .receipt-main { background: #fff; width: 100%; max-width: 420px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+        .nav-bar { background: #111; color: white; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 19px; font-weight: 600; }
         
-        .info-card { background: #fff; border-radius: 12px; margin: 8px 12px; border: 1px solid #eee; }
-        .info-row { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #f9f9f9; align-items: center; }
-        .info-label { color: var(--text-grey); font-size: 13px; font-weight: 600; }
-        .info-value { font-weight: 900; font-family: 'Arial'; font-size: 16px; color: #000; }
-        .info-value-ar { font-weight: 700; font-size: 14px; color: #333; }
+        .success-header { text-align: center; padding: 40px 20px; }
+        .green-tick { width: 85px; height: 85px; background: #25b44b; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 40px; position: relative; border: 8px solid #e9f7ee; }
+        .success-text { color: #000; font-weight: 700; font-size: 16px; margin-top: 25px; display: block; }
+        .transfer-label { color: var(--text-gray); font-size: 15px; margin: 30px 0 15px; display: block; text-align: center; }
 
-        .fees-section { background: #fff; margin: 8px 12px; padding: 15px; border-radius: 12px; border: 1px solid #eee; }
-        .fee-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
-        .fee-bold { font-family: 'Arial'; font-weight: 900; font-size: 17px; color: #000; }
+        /* الكروت البيضاء (Containers) */
+        .card-info { background: #fff; border: 1px solid #eeeeee; border-radius: 18px; margin: 0 15px 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .card-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; border-bottom: 1px solid #f9f9f9; }
+        .card-row:last-child { border-bottom: none; }
+        
+        .lbl { color: var(--text-gray); font-size: 14px; font-weight: 700; }
+        .val-num { font-family: sans-serif; font-weight: 800; font-size: 17px; color: #000; direction: ltr; }
+        .v-icon-group { display: flex; align-items: center; gap: 10px; }
+        .v-icon-group img { width: 28px; }
 
-        .footer-buttons { display: flex; padding: 15px; gap: 10px; margin-top: auto; padding-bottom: 30px; }
-        .btn-share { flex: 2; background: var(--red); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .btn-done { flex: 1; background: #fff; border: 1px solid #ccc; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        /* تذييل الصفحة */
+        .footer-brand { text-align: center; padding: 25px; display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: auto; }
+        .footer-brand img { height: 35px; }
+        .divider { width: 1px; height: 35px; background: #ddd; }
 
-        /* لوحة التحكم */
-        #admin-panel { display:none; position:fixed; inset:0; background:white; z-index:9999; padding:25px; overflow-y: auto; }
-        .admin-trigger { position: fixed; bottom: 0; right: 0; width: 50px; height: 50px; z-index: 10000; opacity: 0; }
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .action-btns { display: flex; padding: 15px 20px 40px; gap: 10px; }
+        .btn-share { flex: 2; background: var(--voda-red); color: #fff; border: none; border-radius: 10px; padding: 16px; font-weight: 800; font-size: 17px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-done { flex: 1; background: #fff; border: 1px solid #ccc; border-radius: 10px; padding: 16px; font-weight: 800; font-size: 17px; }
+
+        /* لوحة تحكم سرية */
+        #admin-panel { display:none; position:fixed; inset:0; background:#fff; z-index:10000; padding:30px; overflow-y:auto; }
+        input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; font-family: 'Cairo'; font-size: 16px; box-sizing: border-box; }
+        .btn-save { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: 900; margin-top: 15px; }
         .page { display: none; } .active { display: block; }
     </style>
 </head>
-<body class="protected" id="mainBody">
+<body class="protected">
 
-<div class="admin-trigger" onclick="handleAdminLogin()"></div>
+<!-- منطقة سرية لفتح اللوحة -->
+<div style="position:fixed; bottom:0; left:0; width:60px; height:60px; z-index:10001;" onclick="askAdmin()"></div>
 
-<!-- واجهة العميل الأساسية -->
-<div id="home" class="page active">
-    <div style="padding: 20px; max-width: 420px; margin: 0 auto;">
-        <div style="background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-top: 5px solid var(--blue);">
-            <h2 style="text-align:center; color:var(--blue); margin-bottom:5px;">سحب الأرباح</h2>
-            <p style="text-align:center; font-size:12px; color:#666;">برجاء تحويل الرسوم لتفعيل الصرف</p>
-            <div style="background:#fff5f5; color:var(--red); padding:15px; text-align:center; border-radius:15px; font-size:24px; font-weight:900; border:2px dashed var(--red); margin:15px 0;" id="f-wallet">01226811784</div>
-            <label style="font-size:12px; font-weight:bold;">اسمك بالكامل:</label>
-            <input type="text" id="uName" placeholder="أدخل اسمك كما في الهوية">
-            <label style="font-size:12px; font-weight:bold;">إرفاق صورة التحويل:</label>
-            <input type="file" id="uFile">
-            <button onclick="submitReq()" style="width:100%; padding:16px; background:var(--blue); color:white; border:none; border-radius:12px; font-weight:900; font-size:16px; margin-top:10px;">تأكيد التحويل الآن</button>
-        </div>
-    </div>
-</div>
-
-<!-- الإيصال النهائي الاحترافي -->
-<div id="final" class="page">
-    <div class="receipt-container">
-        <div class="receipt-header"><span>✕</span><span>تم بنجاح</span><span>⋮</span></div>
-        
-        <div class="success-section">
-            <div class="check-icon">✓</div>
-            <h3 style="margin:0; font-weight:900;">تم التحويل بنجاح</h3>
-            <p style="color:var(--text-grey); font-size:14px; margin-top:20px;">مبلغ التحويل</p>
-        </div>
-
-        <div class="info-card">
-            <div class="info-row">
-                <div class="info-label">من</div>
-                <div class="info-value" id="res-sender">01044552434</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">إلى</div>
-                <div class="info-value-ar" id="res-receiver">محمد *******</div>
-            </div>
-        </div>
-
-        <div class="fees-section">
-            <div class="fee-row">
-                <span class="info-label">الرسوم</span>
-                <span class="fee-bold"><span id="res-fees-display">2.49</span> جنيه</span>
-            </div>
-            <div class="fee-row">
-                <span class="info-label">المبلغ الكلي المستحق</span>
-                <span class="fee-bold"><span id="res-total-display">50,000.00</span> جنيه</span>
-            </div>
-        </div>
-
-        <div class="info-card">
-            <div class="info-row"><div class="info-label">تاريخ العملية</div><div class="info-value" id="res-date" style="font-size:13px;"></div></div>
-            <div class="info-row"><div class="info-label">رقم العملية</div><div class="info-value" id="res-id"></div></div>
-        </div>
-
-        <div style="text-align: center; padding: 20px;">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Vodafone_Cash_Logo.png/640px-Vodafone_Cash_Logo.png" width="70">
-        </div>
-
-        <div class="footer-buttons">
-            <button class="btn-done" onclick="location.reload()">تم</button>
-            <button class="btn-share">شارك ⇮</button>
-        </div>
-    </div>
-</div>
-
-<!-- لوحة التحكم المتطورة -->
+<!-- لوحة المدير -->
 <div id="admin-panel">
-    <h2 style="color:var(--blue)">إعدادات النظام الذكي</h2>
-    <hr>
-    <label>رقم المحفظة (الراسل - من):</label>
-    <input type="text" id="s-sender">
-    
-    <label>مبلغ الربح الصافي (الذي سيصله):</label>
-    <input type="text" id="s-profit" placeholder="مثال: 50,000.00">
-    
-    <label>قيمة الرسوم (التي تظهر في الإيصال):</label>
-    <input type="text" id="s-fees-val" placeholder="مثال: 2.49">
-    
-    <label>كود تفعيل الصرف (أعطه للعميل):</label>
-    <input type="text" id="s-code">
+    <h2 style="color:var(--voda-red); border-bottom: 2px solid #eee; padding-bottom: 10px;">إعدادات الإيصال الإحترافي</h2>
+    <label>رقم المحفظة (من):</label>
+    <input type="text" id="m-from" placeholder="مثال: 01044552434">
+    <label>اسم المستلم (إلى):</label>
+    <input type="text" id="m-to" placeholder="اكتب الاسم كما تريد تشفيره">
+    <label>مبلغ الأرباح:</label>
+    <input type="text" id="m-val" placeholder="مثال: 50,000.00">
+    <label>الرسوم:</label>
+    <input type="text" id="m-fees" placeholder="مثال: 2.49">
+    <label>كود سحب العميل:</label>
+    <input type="text" id="m-code" placeholder="مثال: 1122">
+    <button class="btn-save" onclick="saveAdmin()">حفظ وتحديث النظام</button>
+</div>
 
-    <button onclick="saveAdmin()" style="width:100%; padding:15px; background:#28a745; color:white; border:none; border-radius:10px; font-weight:bold; margin-top:20px;">حفظ التعديلات</button>
-    <button onclick="location.reload()" style="width:100%; padding:10px; background:#666; color:white; border:none; border-radius:10px; margin-top:10px;">إغلاق</button>
+<!-- واجهة العميل -->
+<div id="p-start" class="page active" style="padding:40px 20px; text-align:center;">
+    <div style="background:white; padding:30px; border-radius:20px; border-top: 6px solid var(--voda-red);">
+        <h2 style="color:#111">بوابة صرف الأرباح</h2>
+        <p style="color:#666">يرجى تحويل رسوم الإيداع للرقم المعتمد:</p>
+        <div style="background:#fff3f3; color:var(--voda-red); padding:20px; border-radius:15px; font-size:26px; font-weight:900; border:2px dashed var(--voda-red); margin:20px 0;">01226811784</div>
+        <input type="text" id="c-name" placeholder="أدخل اسمك الثلاثي">
+        <button onclick="validate()" style="width:100%; padding:18px; background:var(--voda-red); color:white; border:none; border-radius:12px; font-weight:900; font-size:17px; cursor:pointer;">تأكيد وصرف الآن</button>
+    </div>
+</div>
+
+<!-- الإيصال النهائي (مطابق لـ image_5) -->
+<div id="p-final" class="page">
+    <div class="receipt-main">
+        <div class="nav-bar">
+            <span>تم بنجاح</span>
+            <span style="font-size: 24px;">〉</span>
+        </div>
+
+        <div class="success-header">
+            <div class="green-tick">✓</div>
+            <span class="success-text">تم التحويل بنجاح</span>
+        </div>
+
+        <span class="transfer-label">مبلغ التحويل</span>
+
+        <div class="card-info">
+            <div class="card-row">
+                <span class="lbl">من</span>
+                <div class="v-icon-group">
+                    <span class="val-num" id="o-from"></span>
+                    <img src="https://i.ibb.co/Lz0TfCq/v-cash-icon.png" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Vodafone_Cash_Logo.png/640px-Vodafone_Cash_Logo.png'">
+                </div>
+            </div>
+            <div class="card-row">
+                <span class="lbl">إلى</span>
+                <div class="v-icon-group">
+                    <span class="val-num" style="direction:rtl; font-family:'Cairo'; font-weight:800;" id="o-to"></span>
+                    <img src="https://i.ibb.co/Lz0TfCq/v-cash-icon.png" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Vodafone_Cash_Logo.png/640px-Vodafone_Cash_Logo.png'">
+                </div>
+            </div>
+        </div>
+
+        <div class="card-info">
+            <div class="card-row">
+                <span class="lbl">الرسوم</span>
+                <span class="val-num"><span id="o-fees"></span> جنيه</span>
+            </div>
+            <div class="card-row">
+                <span class="lbl">المبلغ الكلي المستحق</span>
+                <span class="val-num"><span id="o-val"></span> جنيه</span>
+            </div>
+        </div>
+
+        <div class="card-info">
+            <div class="card-row">
+                <span class="lbl">تاريخ العملية</span>
+                <span class="val-num" id="o-date" style="font-size:14px;"></span>
+            </div>
+            <div class="card-row">
+                <span class="lbl">رقم العملية</span>
+                <span class="val-num" id="o-id"></span>
+            </div>
+        </div>
+
+        <div class="footer-brand">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Vodafone_logo.svg/2560px-Vodafone_logo.svg.png">
+            <div class="divider"></div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Vodafone_Cash_Logo.png/640px-Vodafone_Cash_Logo.png">
+        </div>
+
+        <div class="action-btns">
+            <button class="btn-done">تم</button>
+            <button class="btn-share"><span>شارك</span> <span style="font-size:20px;">⇮</span></button>
+        </div>
+    </div>
 </div>
 
 <script>
-    // الإعدادات الافتراضية
-    let config = JSON.parse(localStorage.getItem('megaConfig')) || { 
-        sender: '01044552434', 
-        profit: '50,000.00', 
+    let state = JSON.parse(localStorage.getItem('vodaData')) || {
+        from: '01044552434',
+        toName: 'محمد محمود',
+        amount: '50,000.00',
         fees: '2.49',
-        code: '1122' 
+        code: '1122'
     };
 
-    function handleAdminLogin() {
-        let p = prompt("كلمة المرور:");
+    function askAdmin() {
+        let p = prompt("باسورد:");
         if(p === "0" || p === "1") {
-            if(p === "0") document.getElementById('mainBody').classList.remove('protected');
-            document.getElementById('s-sender').value = config.sender;
-            document.getElementById('s-profit').value = config.profit;
-            document.getElementById('s-fees-val').value = config.fees;
-            document.getElementById('s-code').value = config.code;
-            document.getElementById('admin-panel').style.display='block';
+            document.getElementById('m-from').value = state.from;
+            document.getElementById('m-to').value = state.toName;
+            document.getElementById('m-val').value = state.amount;
+            document.getElementById('m-fees').value = state.fees;
+            document.getElementById('m-code').value = state.code;
+            document.getElementById('admin-panel').style.display = 'block';
         }
     }
 
     function saveAdmin() {
-        config = {
-            sender: document.getElementById('s-sender').value,
-            profit: document.getElementById('s-profit').value,
-            fees: document.getElementById('s-fees-val').value,
-            code: document.getElementById('s-code').value
+        state = {
+            from: document.getElementById('m-from').value,
+            toName: document.getElementById('m-to').value,
+            amount: document.getElementById('m-val').value,
+            fees: document.getElementById('m-fees').value,
+            code: document.getElementById('m-code').value
         };
-        localStorage.setItem('megaConfig', JSON.stringify(config));
+        localStorage.setItem('vodaData', JSON.stringify(state));
         alert("تم الحفظ بنجاح!");
         location.reload();
     }
 
-    function submitReq() {
-        let name = document.getElementById('uName').value;
-        if(!name) return alert("يرجى إدخال الاسم أولاً");
-        
-        let c = prompt("طلبك قيد المعالجة.. أدخل كود الصرف :");
-        if(c === config.code) {
-            // تجهيز بيانات الإيصال
-            document.getElementById('res-sender').innerText = config.sender;
-            document.getElementById('res-fees-display').innerText = config.fees;
-            document.getElementById('res-total-display').innerText = config.profit;
+    function validate() {
+        if(!document.getElementById('c-name').value) return alert("يرجى كتابة الاسم");
+        let pass = prompt("أدخل كود الصرف المعتمد:");
+        if(pass === state.code) {
+            document.getElementById('o-from').innerText = state.from;
+            document.getElementById('o-fees').innerText = state.fees;
+            document.getElementById('o-val').innerText = state.amount;
             
-            // تشفير الاسم (أول كلمة + نجوم)
-            let nameParts = name.split(" ");
-            document.getElementById('res-receiver').innerText = nameParts[0] + " " + "********";
-            
-            // تاريخ حقيقي
+            // نظام التشفير: أول كلمة ثم نجوم بالمسافات المطلوبة في image_5
+            let nameParts = state.toName.split(" ");
+            document.getElementById('o-to').innerText = "*******| ******| " + nameParts[0];
+
             let d = new Date();
-            document.getElementById('res-date').innerText = d.toLocaleDateString('en-GB') + " - " + d.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
-            
-            // رقم عملية وهمي محترف
-            document.getElementById('res-id').innerText = "35" + Math.floor(Math.random() * 900000000 + 100000000);
-            
-            document.getElementById('home').classList.remove('active');
-            document.getElementById('final').classList.add('active');
+            document.getElementById('o-date').innerText = d.toLocaleDateString('en-GB') + " - " + d.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+            document.getElementById('o-id').innerText = "35" + Math.floor(Math.random() * 900000000);
+
+            document.getElementById('p-start').classList.remove('active');
+            document.getElementById('p-final').classList.add('active');
         } else {
             alert("الكود غير صحيح!");
         }
     }
-
-    document.addEventListener('contextmenu', e => { 
-        if(!document.getElementById('mainBody').classList.contains('protected')) return;
-        e.preventDefault(); 
-    });
 </script>
 </body>
 </html>
