@@ -2,129 +2,125 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تأكيد التحويل</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>فودافون كاش</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; background: #fff; font-family: 'Cairo', sans-serif; overflow-x: hidden; }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: #f4f4f4; }
         
-        .receipt-container {
-            position: relative;
-            width: 100%;
-            max-width: 420px;
-            margin: 0 auto;
-        }
+        /* واجهة الموقع الأصلية (قبل الوصول للصورة) */
+        #main-site { padding: 20px; text-align: center; }
+        .step-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .btn-pay { background: #e60000; color: white; padding: 15px 40px; border: none; border-radius: 25px; font-weight: bold; width: 100%; cursor: pointer; }
 
-        .base-img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
+        /* حاوية الصورة النهائية */
+        #final-receipt { display: none; position: relative; width: 100%; max-width: 420px; margin: 0 auto; overflow: hidden; }
+        .base-img { width: 100%; display: block; }
 
-        .text-overlay {
+        /* النصوص القابلة للتحريك */
+        .draggable {
             position: absolute;
+            cursor: move;
+            user-select: none;
+            touch-action: none;
             color: #000;
-            pointer-events: none;
             white-space: nowrap;
+            font-weight: 900;
+            font-family: Arial, sans-serif;
         }
 
-        /* تنسيق البيانات فوق الصورة بالملي */
-        #val-to { top: 52.8%; left: 16%; font-size: 3.8vw; font-weight: 800; direction: ltr; }
-        #val-fees { top: 60.8%; right: 16%; font-size: 4vw; font-family: Arial; font-weight: 900; }
-        #val-total { top: 64.5%; right: 16%; font-size: 4vw; font-family: Arial; font-weight: 900; }
-        #val-date { top: 71.2%; left: 16%; font-size: 3.2vw; font-family: Arial; font-weight: 900; }
-        #val-id { top: 75.2%; left: 16%; font-size: 3.5vw; font-family: Arial; font-weight: 900; }
+        #drag-amount { top: 64.5%; left: 16%; font-size: 17px; }
+        #drag-date { top: 68.5%; right: 16%; font-size: 13px; }
+        #drag-id { top: 72.5%; right: 16%; font-size: 14px; }
 
-        @media (min-width: 420px) {
-            #val-to { font-size: 16px; }
-            #val-fees { font-size: 17px; }
-            #val-total { font-size: 17px; }
-            #val-date { font-size: 13px; }
-            #val-id { font-size: 15px; }
-        }
-
-        /* لوحة التحكم المبسطة */
-        #admin-box { display:none; position:fixed; inset:0; background:white; z-index:100; padding:25px; overflow-y:auto; }
-        input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-family: 'Cairo'; font-size: 16px; }
-        .btn-save { width:100%; padding:15px; background:#28a745; color:white; border:none; border-radius:10px; font-weight:bold; font-size: 17px; margin-top: 10px; }
-        
-        /* المنطقة المخفية أسفل اليمين */
-        .trigger-zone { position:fixed; bottom:0; right:0; width:60px; height:60px; z-index:101; }
+        /* لوحة التحكم */
+        #admin { display:none; position:fixed; inset:0; background:white; z-index:1000; padding:20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; }
+        .trigger { position:fixed; bottom:0; left:0; width:50px; height:50px; z-index:1001; }
     </style>
 </head>
 <body>
 
-<div class="trigger-zone" onclick="openAdmin()"></div>
+<div class="trigger" onclick="checkPass()"></div>
 
-<div id="admin-box">
-    <h2 style="color:#e60000">إعدادات الأرباح والرسوم</h2>
-    <label>رقم المحفظة (إلى):</label>
-    <input type="text" id="in-to" placeholder="اسم أو رقم المستلم">
-    <label>مبلغ الأرباح:</label>
-    <input type="text" id="in-amount" placeholder="مثال: 50,000.00">
-    <label>قيمة الرسوم:</label>
-    <input type="text" id="in-fees" placeholder="مثال: 2.49">
-    <label>كلمة مرور اللوحة:</label>
-    <input type="password" id="admin-pass" placeholder="أدخل 0 أو 1">
-    <button class="btn-save" onclick="saveData()">تحديث الإيصال</button>
+<!-- الجزء الأول: الموقع كما كان -->
+<div id="main-site">
+    <div class="step-card">
+        <h3>تأكيد دفع الرسوم</h3>
+        <p>برجاء الضغط على الزر أدناه لإتمام العملية</p>
+        <button class="btn-pay" onclick="showReceipt()">تأكيد الدفع</button>
+    </div>
 </div>
 
-<div class="receipt-container">
-    <!-- الصورة المرفوعة من قبلك على GitHub -->
-    <img src="image_5.png.jpg" class="base-img" alt="Background">
+<!-- الجزء الثاني: الصورة النهائية -->
+<div id="final-receipt">
+    <img src="image_5.png.jpg" class="base-img">
     
-    <!-- البيانات المتحركة -->
-    <div id="val-to" class="text-overlay"></div>
-    <div id="val-fees" class="text-overlay"></div>
-    <div id="val-total" class="text-overlay"></div>
-    <div id="val-date" class="text-overlay"></div>
-    <div id="val-id" class="text-overlay"></div>
+    <!-- النصوص التي طلبتها فقط مع ميزة التحريك -->
+    <div id="drag-amount" class="draggable">50,000.00 جنيه</div>
+    <div id="drag-date" class="draggable">--/--/----</div>
+    <div id="drag-id" class="draggable">35xxxxxxx</div>
+</div>
+
+<!-- لوحة التحكم في المبلغ -->
+<div id="admin">
+    <h3>تعديل المبلغ فقط</h3>
+    <input type="text" id="new-amount" placeholder="اكتب المبلغ الجديد هنا">
+    <button class="btn-pay" onclick="updateAmount()">تحديث وعرض الصورة</button>
 </div>
 
 <script>
-    let config = JSON.parse(localStorage.getItem('voda_simple')) || {
-        to: 'محمد أحمد',
-        amount: '50,000.00',
-        fees: '2.49'
-    };
-
-    function openAdmin() {
-        let p = prompt("الباسورد لفتح اللوحة:");
-        if(p === "0" || p === "1") {
-            document.getElementById('in-to').value = config.to;
-            document.getElementById('in-amount').value = config.amount;
-            document.getElementById('in-fees').value = config.fees;
-            document.getElementById('admin-box').style.display = 'block';
-        }
+    function checkPass() {
+        let p = prompt("الباسورد:");
+        if(p==="0" || p==="1") document.getElementById('admin').style.display='block';
     }
 
-    function saveData() {
-        config = {
-            to: document.getElementById('in-to').value,
-            amount: document.getElementById('in-amount').value,
-            fees: document.getElementById('in-fees').value
-        };
-        localStorage.setItem('voda_simple', JSON.stringify(config));
-        alert("تم تحديث البيانات بنجاح");
-        location.reload();
+    function updateAmount() {
+        let amt = document.getElementById('new-amount').value;
+        if(amt) document.getElementById('drag-amount').innerText = amt + " جنيه";
+        document.getElementById('admin').style.display='none';
     }
 
-    window.onload = function() {
-        // عرض البيانات الأساسية
-        document.getElementById('val-fees').innerText = config.fees + " جنيه";
-        document.getElementById('val-total').innerText = config.amount + " جنيه";
-        document.getElementById('val-to').innerText = "*******| ******| " + config.to;
-
-        // توليد تاريخ ووقت العملية الحالي
+    function showReceipt() {
+        document.getElementById('main-site').style.display = 'none';
+        document.getElementById('final-receipt').style.display = 'block';
+        
+        // ضبط التاريخ التلقائي
         let now = new Date();
-        let dateStr = now.toLocaleDateString('en-GB') + " - " + 
-                      now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit', hour12: false});
-        document.getElementById('val-date').innerText = dateStr;
-
-        // توليد رقم عملية عشوائي يبدأ بـ 35
-        let randomID = "35" + Math.floor(Math.random() * 900000000);
-        document.getElementById('val-id').innerText = randomID;
+        document.getElementById('drag-date').innerText = now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'}) + " - " + now.toLocaleDateString('en-GB');
+        // رقم عملية عشوائي
+        document.getElementById('drag-id').innerText = "35" + Math.floor(Math.random() * 900000000);
     }
+
+    // كود التحريك (Drag & Drop) للموبايل والكمبيوتر
+    const draggables = document.querySelectorAll('.draggable');
+    draggables.forEach(el => {
+        let isDragging = false;
+        el.addEventListener('mousedown', start);
+        el.addEventListener('touchstart', start);
+
+        function start(e) {
+            isDragging = true;
+            let event = e.type === 'touchstart' ? e.touches[0] : e;
+            let shiftX = event.clientX - el.getBoundingClientRect().left;
+            let shiftY = event.clientY - el.getBoundingClientRect().top;
+
+            function move(e) {
+                if (!isDragging) return;
+                let ev = e.type === 'touchmove' ? e.touches[0] : e;
+                let parent = document.getElementById('final-receipt').getBoundingClientRect();
+                el.style.left = ((ev.clientX - parent.left - shiftX) / parent.width * 100) + '%';
+                el.style.top = ((ev.clientY - parent.top - shiftY) / parent.height * 100) + '%';
+            }
+
+            function stop() { isDragging = false; }
+
+            document.addEventListener('mousemove', move);
+            document.addEventListener('touchmove', move);
+            document.addEventListener('mouseup', stop);
+            document.addEventListener('touchend', stop);
+        }
+    });
 </script>
 
 </body>
